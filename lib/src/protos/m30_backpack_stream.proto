@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+
+package m30_backpack_stream;
+
+service M30BackpackIOStream{
+  rpc StreamEmergencyButton (SayRequest) returns (stream HelloButton){}
+  rpc StreamBackpackButtons (SayRequest) returns (stream HelloBackpackButtons) {}
+  rpc StreamJoystick (SayRequest) returns (stream JoyMessage) {}
+}
+
+message SayRequest{
+  bool trigger = 1;
+}
+
+message HelloButton{
+  bool emrButton = 1;
+}
+
+message HelloBackpackButtons{
+  repeated bool buttons = 1;
+}
+
+// The response message containing the greetings
+message HelloReply {
+  string message = 1;
+}
+
+message JoyMessage {
+  repeated int32 buttons = 1;
+  repeated float axes = 2;
+
+}
+
+message MyResponse{
+  string message = 1;
+}
