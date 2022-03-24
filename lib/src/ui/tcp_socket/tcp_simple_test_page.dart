@@ -26,18 +26,50 @@ class TcpSimpleTestPage extends ConsumerStatefulWidget {
 
 class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
   Socket? _clientSocket;
+  BasicMsg _basicMsg = BasicMsg(msg: "", timestamp: 0);
+  StreamSubscription? _streamSubscription;
+  bool _isSocketConnected = false;
 
   @override
   void initState() {
     // TODO: implement initState
+
     super.initState();
+    connectDevice();
   }
 
-  BasicMsg _basicMsg = BasicMsg(msg: "", timestamp: 0);
+  Future connectDevice() async {
+    print("[Call] connectDevice()");
+    FlutterP2pPlus _flutterP2pPlus = ref.read(wifiDirectProvider).flutterP2pPlus;
+    print("[Device] : ${widget.device} | ${widget.device.deviceAddress} | "
+        "${widget.device.deviceName}");
+    try {
+      bool? result = await _flutterP2pPlus.connect(widget.device);
+      print("[connect] result: $result");
+      if (result ?? false) {
+        ref.read(p2pDeviceConnectionStateProvider.notifier).state = true;
+      }
+    } catch (e) {
+      ref.read(p2pDeviceConnectionStateProvider.notifier).state = false;
+      print(e.toString());
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          content: Text(e.toString()),
+        ),
+      );
+    }
+
+    // await Future.delayed(const Duration(seconds: 10));
+    // await _flutterP2pPlus.stopDiscoverDevices();
+    // await Future.delayed(const Duration(seconds: 3));
+    print("[Info] Completed connectDevice()");
+    setState(() {});
+  }
 
   void dataHandler(data) {
-    // var msg = utf8.decode(data.data);
-    var msg = String.fromCharCodes(data).trim();
+    var msg = utf8.decode(data);
+    // var msg = String.fromCharCodes(data).trim();
     print(msg);
     var _splitPacket = msg.split("#");
 
@@ -107,24 +139,35 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
   }
 
   void doneHandler() {
+    print("socket listen onDone(): doneHandler()");
     _clientSocket?.destroy();
   }
 
   Future connectSocket() async {
     var ipAddress = ref.watch(p2pDeviceAddressProvider);
-    _clientSocket = await Socket.connect(ipAddress ?? '192.168.15.240', 8000).catchError((e) {
+    _clientSocket =
+        await Socket.connect(ipAddress ?? '192.168.15.240', 8000, timeout: Duration(seconds: 5)).catchError((e) {
       print("Unable to connect: $e");
     });
+    print("_clientSocket: ${_clientSocket}");
+    if(_clientSocket !=null){
+      setState(() {
+        _isSocketConnected = true;
+      });
+    }
   }
 
-  StreamSubscription? _streamSubscription;
 
   Future listenData() async {
-
+    print("[Call] listenData()");
     await _streamSubscription?.cancel();
     _streamSubscription = null;
-    _streamSubscription ??=
-        _clientSocket?.listen(dataHandler, onError: errorHandler, onDone: doneHandler, cancelOnError: false);
+    _streamSubscription ??= _clientSocket?.listen(
+      dataHandler,
+      onError: errorHandler,
+      onDone: doneHandler,
+      cancelOnError: false,
+    );
   }
 
   Future stopListen() async {
@@ -136,7 +179,7 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
     // _clientSocket?.listen(dataHandler, onError: errorHandler, onDone: doneHandler, cancelOnError: false);
   }
 
-  Future startCommend() async{
+  Future startCommend() async {
     try {
       _clientSocket?.write("start");
     } catch (e, s) {
@@ -165,104 +208,197 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
               _clientSocket?.destroy();
             }
           },
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
         ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                    onPressed: () {
-                      connectSocket();
-                    },
-                    child: const Text("소켓 연결")),
-                ElevatedButton(
-                  onPressed: () async {
-                    await _clientSocket?.close();
-                    _clientSocket?.destroy();
-                  },
-                  child: const Text("연결 종료"),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    listenData();
-                  },
-                  child: const Text("데이터 구독"),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    startCommend();
-                  },
-                  child: const Text("데이터 시작 "),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    stopListen();
-                  },
-                  child: const Text("데이터 종료"),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 240,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Consumer(
-                      builder: (BuildContext context, WidgetRef ref, Widget? child) {
-                        final emrState = ref.watch(emrButtonStateProvider);
-                        return Container(
-                          height: double.infinity,
-                          decoration: BoxDecoration(
-                            color: emrState ? Colors.green : Colors.red,
-                          ),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(
+                height: 360,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          if(!_isSocketConnected){
+                            connectSocket();
+                          }
+                        },
+                        child: Container(
+                          color: Colors.green,
+                          child: const Center(child: Text("소켓 연결")),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () async {
+                          print("연결 종료");
+                          await _clientSocket?.close();
+                          _clientSocket?.destroy();
+                          setState(() {
+                            _isSocketConnected = false;
+                          });
+                          // _clientSocket?.drain().then((_) {
+                          //   print('Stop.');
+                          //   // timer.cancel();
+                          //   _clientSocket?.close();
+                          // });
+                        },
+                        child: Container(
+                          color: Colors.red,
                           child: const Center(
-                              child: Text(
-                            "비상버튼",
-                          )),
-                        );
+                            child: Text(
+                              "연결 종료",
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 360,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () async {
+                          try {
+                            _clientSocket?.write("Hello");
+                          } catch (e) {
+                            print(e);
+                          }
+                        },
+                        child: Container(
+                          color: Colors.pink,
+                          child: const Center(child: Text("데이터 보내기 ")),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                      onPressed: () {
+                        connectSocket();
                       },
-                    ),
+                      child: const Text("소켓 연결")),
+                  ElevatedButton(
+                    onPressed: () async {
+                      await _clientSocket?.close();
+                      _clientSocket?.destroy();
+                    },
+                    child: const Text("연결 종료"),
                   ),
-                  const SizedBox(
-                    width: 16,
+                  ElevatedButton(
+                    onPressed: () {
+                      listenData();
+                    },
+                    child: const Text("데이터 구독"),
                   ),
-                  Expanded(
-                    child: Consumer(
-                      builder: (BuildContext context, WidgetRef ref, Widget? child) {
-                        final backpackState = ref.watch(backpackButtonProvider);
-                        return GridView.count(
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 16,
-                          crossAxisSpacing: 16,
-                          childAspectRatio: 1.8,
-                          children: backpackState
-                              .map((e) => Container(
-                                  decoration: BoxDecoration(
-                                    color: e ? Colors.red : Colors.green,
-                                  ),
-                                  child: const Text("")))
-                              .toList(),
-                        );
-                      },
-                    ),
+                  ElevatedButton(
+                    onPressed: () {
+                      startCommend();
+                    },
+                    child: const Text("데이터 시작 "),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      stopListen();
+                    },
+                    child: const Text("데이터 종료"),
                   ),
                 ],
               ),
-            ),
-            SizedBox(
-              height: 400,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: SizedBox(
-                      // height: 300,
+              SizedBox(
+                height: 240,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Consumer(
+                        builder: (BuildContext context, WidgetRef ref, Widget? child) {
+                          final emrState = ref.watch(emrButtonStateProvider);
+                          return Container(
+                            height: double.infinity,
+                            decoration: BoxDecoration(
+                              color: emrState ? Colors.green : Colors.red,
+                            ),
+                            child: const Center(
+                                child: Text(
+                              "비상버튼",
+                            )),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 16,
+                    ),
+                    Expanded(
+                      child: Consumer(
+                        builder: (BuildContext context, WidgetRef ref, Widget? child) {
+                          final backpackState = ref.watch(backpackButtonProvider);
+                          return GridView.count(
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 16,
+                            crossAxisSpacing: 16,
+                            childAspectRatio: 1.8,
+                            children: backpackState
+                                .map((e) => Container(
+                                    decoration: BoxDecoration(
+                                      color: e ? Colors.red : Colors.green,
+                                    ),
+                                    child: const Text("")))
+                                .toList(),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 400,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        // height: 300,
+                        child: Consumer(builder: (context, ref, _) {
+                          final joy = ref.watch(joyButtonStateBoolProvider);
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: GridView.count(
+                              shrinkWrap: true,
+                              crossAxisCount: 4,
+                              crossAxisSpacing: 8,
+                              mainAxisSpacing: 8,
+                              childAspectRatio: 0.8,
+                              children: joy
+                                  .map(
+                                    (e) => Container(
+                                      decoration: BoxDecoration(
+                                        color: e ? Colors.red : Colors.green,
+                                      ),
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
+                          );
+                        }),
+                      ),
+                    ),
+                    Expanded(
                       child: Consumer(builder: (context, ref, _) {
-                        final joy = ref.watch(joyButtonStateBoolProvider);
+                        final joy = ref.watch(joyAxisStateProvider);
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: GridView.count(
@@ -270,12 +406,21 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
                             crossAxisCount: 4,
                             crossAxisSpacing: 8,
                             mainAxisSpacing: 8,
-                            childAspectRatio: 0.8,
+                            childAspectRatio: 0.5,
                             children: joy
                                 .map(
                                   (e) => Container(
                                     decoration: BoxDecoration(
-                                      color: e  ? Colors.red : Colors.green,
+                                      border: Border.all(),
+                                    ),
+                                    padding: const EdgeInsets.all(8),
+                                    child: Center(
+                                      child: Text(
+                                        e.toStringAsFixed(6),
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 )
@@ -284,44 +429,11 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
                         );
                       }),
                     ),
-                  ),
-                  Expanded(
-                    child: Consumer(builder: (context, ref, _) {
-                      final joy = ref.watch(joyAxisStateProvider);
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: GridView.count(
-                          shrinkWrap: true,
-                          crossAxisCount: 4,
-                          crossAxisSpacing: 8,
-                          mainAxisSpacing: 8,
-                          childAspectRatio: 0.5,
-                          children: joy
-                              .map(
-                                (e) => Container(
-                                  decoration: BoxDecoration(
-                                    border: Border.all(),
-                                  ),
-                                  padding: const EdgeInsets.all(8),
-                                  child: Center(
-                                    child: Text(
-                                      e.toStringAsFixed(6),
-                                      style: const TextStyle(
-                                        fontSize: 20,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              )
-                              .toList(),
-                        ),
-                      );
-                    }),
-                  ),
-                ],
-              ),
-            )
-          ],
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

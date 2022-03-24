@@ -22,6 +22,13 @@ class DeviceConnectionPage extends ConsumerStatefulWidget {
 }
 
 class _DeviceConnectionPageState extends ConsumerState<DeviceConnectionPage> {
+
+  ClientChannel? channel;
+  GreeterClient? stub;
+  M30BackpackIOStreamClient? m30BackpackStub;
+
+  Map<String, StreamSubscription?> _streamSubscriptionMap = {};
+
   Future connectDevice() async {
     print("[Call] connectDevice()");
     FlutterP2pPlus _flutterP2pPlus = ref.read(wifiDirectProvider).flutterP2pPlus;
@@ -58,11 +65,7 @@ class _DeviceConnectionPageState extends ConsumerState<DeviceConnectionPage> {
     connectDevice();
   }
 
-  ClientChannel? channel;
-  GreeterClient? stub;
-  M30BackpackIOStreamClient? m30BackpackStub;
 
-  Map<String, StreamSubscription?> _streamSubscriptionMap = {};
 
   Future _connectionGrpc() async {
     print("   widget.device.deviceAddress,: ${widget.device.deviceAddress}");
