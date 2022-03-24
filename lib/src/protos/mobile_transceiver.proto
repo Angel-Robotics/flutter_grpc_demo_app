@@ -6,6 +6,21 @@ package mobile_transceiver;
 service MobileTransceiver {
   // Sends a greeting
   rpc SayHello (HelloRequest) returns (HelloReply) {}
+  rpc SetMode(ModeBlock) returns (HelloReply){}
+}
+
+enum EnumMode{
+  MODE_SIT = 0;
+  MODE_STAND = 1;
+  MODE_STANDING = 2;
+  MODE_LEVEL_WALKING = 3;
+  MODE_STAIRS = 4;
+  MODE_SQUAT = 5;
+}
+
+message ModeBlock{
+  EnumMode mode = 1;
+
 }
 // The request message containing the user's name.
 message HelloRequest {
