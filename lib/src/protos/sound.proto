@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package sound;
+
+// The greeting service definition.
+service Sound {
+  // Sends a greeting
+  rpc SayHello (HelloRequest) returns (HelloReply) {}
+  rpc PlaySound(PlayRequest) returns (HelloReply){}
+  rpc SetVolume(Volume) returns (HelloReply){}
+}
+
+message PlayRequest{
+  int32 volume = 1;
+  int32 sex = 2;
+  string path = 3;
+}
+
+message Volume{
+  int32 level = 1;
+}
+// The request message containing the user's name.
+message HelloRequest {
+  string name = 1;
+}
+
+// The response message containing the greetings
+message HelloReply {
+  string message = 1;
+}
