@@ -7,6 +7,15 @@ service MobileTransceiver {
   // Sends a greeting
   rpc SayHello (HelloRequest) returns (HelloReply) {}
   rpc SetMode(ModeBlock) returns (HelloReply){}
+  rpc SendRobotControl(RobotControl) returns(HelloReply){}
+}
+
+enum EnumRobotControl{
+  IDLE = 0;
+  MODE_START = 1;
+  MODE_PAUSE = 2;
+  MODE_STOP = 3;
+  FORCE_STOP = 4;
 }
 
 enum EnumMode{
@@ -18,6 +27,9 @@ enum EnumMode{
   MODE_SQUAT = 5;
 }
 
+message RobotControl{
+  EnumRobotControl robotControl = 1;
+}
 message ModeBlock{
   EnumMode mode = 1;
 

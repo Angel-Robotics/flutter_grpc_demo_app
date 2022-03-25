@@ -8,6 +8,7 @@ import 'package:flutter_grpc_demo_app/src/enums/enum_mode.dart';
 import 'package:flutter_grpc_demo_app/src/model/basic_msg.dart';
 import 'package:flutter_grpc_demo_app/src/protos/helloworld.pbgrpc.dart';
 import 'package:flutter_grpc_demo_app/src/protos/m30_backpack_stream.pbgrpc.dart';
+import 'package:flutter_grpc_demo_app/src/protos/mobile_transceiver.pbgrpc.dart';
 import 'package:flutter_grpc_demo_app/src/protos/sound.pb.dart';
 import 'package:flutter_grpc_demo_app/src/protos/sound.pbgrpc.dart';
 import 'package:flutter_grpc_demo_app/src/provider/backpack_button_provider.dart';
@@ -42,6 +43,9 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
   SoundClient? soundStub;
   double soundVolume = 70.0;
 
+  ClientChannel? _clientChannel;
+  MobileTransceiverClient? _mobileTransceiverClient;
+
   Future sendPlaySound(String args) async {
     // final name = args.isNotEmpty ? args[0] : 'world';
 
@@ -68,6 +72,20 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
     }
   }
 
+  Future sendSetMode() async{
+    try {
+      final response = await _mobileTransceiverClient?.setMode(
+        ModeBlock()..mode = EnumMode.MODE_SIT,
+        options: CallOptions(compression: const GzipCodec()),
+      );
+      print('Greeter client received: ${response?.message}');
+    } catch (e) {
+      print('Caught error: $e');
+    }
+  }
+
+  EnumSelectMode _enumMode = EnumSelectMode.unselect;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -75,169 +93,6 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
     connectDevice();
 
   }
-
-  Future connectDevice() async {
-    print("[Call] connectDevice()");
-    FlutterP2pPlus _flutterP2pPlus = ref.read(wifiDirectProvider).flutterP2pPlus;
-    print("[Device] : ${widget.device} | ${widget.device.deviceAddress} | "
-        "${widget.device.deviceName}");
-    try {
-      bool? result = await _flutterP2pPlus.connect(widget.device);
-      print("[connect] result: $result");
-
-      if (result ?? false) {
-        ref.read(p2pDeviceConnectionStateProvider.notifier).state = true;
-      }
-
-      soundChannel = ClientChannel(
-        '192.168.15.240',
-        port: 50052,
-        options: ChannelOptions(
-          credentials: const ChannelCredentials.insecure(),
-          codecRegistry: CodecRegistry(codecs: const [GzipCodec(), IdentityCodec()]),
-        ),
-      );
-      soundStub = SoundClient(soundChannel!);
-    } catch (e) {
-      ref.read(p2pDeviceConnectionStateProvider.notifier).state = false;
-      print(e.toString());
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          content: Text(e.toString()),
-        ),
-      );
-    }
-
-    // await Future.delayed(const Duration(seconds: 10));
-    // await _flutterP2pPlus.stopDiscoverDevices();
-    // await Future.delayed(const Duration(seconds: 3));
-    print("[Info] Completed connectDevice()");
-    setState(() {});
-  }
-
-  void dataHandler(data) {
-    var msg = utf8.decode(data);
-    // var msg = String.fromCharCodes(data).trim();
-    print(msg);
-    var _splitPacket = msg.split("#");
-
-    for (String element in _splitPacket) {
-      print("[Origin Msg] element : ${element}");
-      if (element.isNotEmpty && element.length > 50) {
-        try {
-          var _msg = BasicMsg.fromJson(jsonDecode(element));
-          // print("[Origin Msg][fromJson] : ${[_msg]}");
-          double diffTime = (_msg.timestamp ?? 0) - (_basicMsg.timestamp ?? 0);
-          _basicMsg = BasicMsg.fromJson(jsonDecode(element));
-          var splitMsgItem = _basicMsg.msg?.split("|") ?? [];
-          // print("splitMsgItem Length : ${splitMsgItem.length}");
-          if (splitMsgItem.length > 1) {
-            String type = splitMsgItem[0];
-            String value = splitMsgItem[1];
-            if (type == "emr") {
-              debugPrint("emr 버튼 패킷 들어옴 ");
-              if (value == "False") {
-                ref.watch(emrButtonStateProvider.notifier).state = false;
-              } else {
-                ref.watch(emrButtonStateProvider.notifier).state = true;
-              }
-            } else if (type == "backpack") {
-              debugPrint("backpack 버튼 패킷 들어옴 ");
-              debugPrint("===== 백팩 버튼 Value: $value");
-              var result = value.substring(1, value.length - 1);
-              // debugPrint(result);
-              var sResult = result.split(",");
-              var filterList = sResult.map((e) => e == "True" ? true : false).toList();
-              debugPrint(filterList.toString());
-              ref.watch(backpackButtonProvider.notifier).state = filterList;
-            } else if (type == "joy") {
-              debugPrint("조이스틱 패킷 들어옴 ");
-              debugPrint("===== 조이스틱 값 Value: $value");
-              var joyParts = value.split("@");
-              var _btnResult = joyParts[0].substring(1, joyParts[0].length - 1);
-              // debugPrint(result);
-              var sResult = _btnResult.split(",");
-              var _filterList = sResult.map((e) => e.trim() == "0" ? true : false).toList();
-              debugPrint("[JoyStick][Buttons] : ${_filterList.toString()}");
-
-              var _axisResult = joyParts[1].substring(1, joyParts[1].length - 1);
-              var _sResult = _axisResult.split(",");
-              var _filterAxisList = _sResult.map((e) => double.parse(e.trim())).toList();
-              ref.watch(joyButtonStateBoolProvider.notifier).updateState(_filterList);
-              ref.watch(joyAxisStateProvider.notifier).updateState(_filterAxisList);
-            }
-          }
-
-          // _sumTotalTime += diffTime;
-          // _sumTotalCount++;
-          ref.watch(p2pSocketInputTimestampProvider.notifier).state = diffTime;
-          // ref.watch(benchmarkPackAvgTime.notifier).state = (_sumTotalTime / _sumTotalCount);
-
-        } catch (e, s) {
-          debugPrint("[Error] 변환 오류 ${e.toString()} , ${s.toString()}");
-        }
-      }
-    }
-
-    // print(String.fromCharCodes(data).trim());
-  }
-
-  void errorHandler(error, StackTrace trace) {
-    print(error);
-  }
-
-  void doneHandler() {
-    print("socket listen onDone(): doneHandler()");
-    _clientSocket?.destroy();
-    _streamSubscription?.cancel().then((value) {
-      _streamSubscription = null;
-    });
-  }
-
-  Future connectSocket() async {
-    var ipAddress = ref.watch(p2pDeviceAddressProvider);
-    _clientSocket =
-        await Socket.connect(ipAddress ?? '192.168.15.240', 8000, timeout: const Duration(seconds: 5)).catchError((e) {
-      print("Unable to connect: $e");
-    });
-    print("_clientSocket: ${_clientSocket}");
-    if (_clientSocket != null) {
-      setState(() {
-        _isSocketConnected = true;
-      });
-    }
-  }
-
-  Future listenData() async {
-    print("[Call] listenData()");
-    await _streamSubscription?.cancel();
-    _streamSubscription = null;
-    _streamSubscription ??= _clientSocket?.listen(
-      dataHandler,
-      onError: errorHandler,
-      onDone: doneHandler,
-      cancelOnError: false,
-    );
-  }
-
-  Future stopListen() async {
-    try {
-      _clientSocket?.write("end");
-    } catch (e, s) {
-      print("[Error] ${e.toString()}, ${s.toString()}");
-    }
-    // _clientSocket?.listen(dataHandler, onError: errorHandler, onDone: doneHandler, cancelOnError: false);
-  }
-
-  Future startCommend() async {
-    try {
-      _clientSocket?.write("start");
-    } catch (e, s) {
-      print("[Error] ${e.toString()}, ${s.toString()}");
-    }
-  }
-
 
   @override
   void dispose() {
@@ -311,7 +166,7 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
                               },
                               child: const Text(
                                 "연결 종료",
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 18,
                                   color: Colors.white,
                                 ),
@@ -600,7 +455,7 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
                     ),
                     Row(
                       children: [
-                        Text("볼륨"),
+                        const Text("볼륨"),
                         Expanded(
                           child: Slider(value: soundVolume,
                               min: 0,
@@ -612,7 +467,7 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
                                 });
                               }),
                         ),
-                        Text("${soundVolume}"),
+                        Text("$soundVolume"),
                       ],
                     ),
                     const SizedBox(
@@ -624,7 +479,9 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
                       children: [
                         ClickyButton(
                           color: Colors.grey,
-                          onPressed: () async {},
+                          onPressed: () async {
+                            sendSetMode();
+                          },
                           child: const Text(
                             "모드 설정",
                             style: TextStyle(
@@ -676,63 +533,63 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
                     ),
                     Wrap(
                       children: [
-                        RadioListTile<EnumMode>(
+                        RadioListTile<EnumSelectMode>(
                           title: const Text("앉기"),
-                          value: EnumMode.sit,
+                          value: EnumSelectMode.sit,
                           groupValue: _enumMode,
                           onChanged: (v) {
                             setState(() {
-                              _enumMode = v ?? EnumMode.sit;
+                              _enumMode = v ?? EnumSelectMode.sit;
                             });
                           },
                         ),
-                        RadioListTile<EnumMode>(
+                        RadioListTile<EnumSelectMode>(
                           title: const Text("일어서기"),
-                          value: EnumMode.stand,
+                          value: EnumSelectMode.stand,
                           groupValue: _enumMode,
                           onChanged: (v) {
                             setState(() {
-                              _enumMode = v ?? EnumMode.stand;
+                              _enumMode = v ?? EnumSelectMode.stand;
                             });
                           },
                         ),
-                        RadioListTile<EnumMode>(
+                        RadioListTile<EnumSelectMode>(
                           title: const Text("서있기"),
-                          value: EnumMode.standing,
+                          value: EnumSelectMode.standing,
                           groupValue:_enumMode,
                           onChanged: (v) {
                             setState(() {
-                              _enumMode = v ?? EnumMode.standing;
+                              _enumMode = v ?? EnumSelectMode.standing;
                             });
                           },
                         ),
-                        RadioListTile<EnumMode>(
+                        RadioListTile<EnumSelectMode>(
                           title: const Text("스쿼트"),
-                          value: EnumMode.squat,
+                          value: EnumSelectMode.squat,
                           groupValue:_enumMode,
                           onChanged: (v) {
                             setState(() {
-                              _enumMode = v ?? EnumMode.squat;
+                              _enumMode = v ?? EnumSelectMode.squat;
                             });
                           },
                         ),
-                        RadioListTile<EnumMode>(
+                        RadioListTile<EnumSelectMode>(
                           title: const Text("평지보행"),
-                          value: EnumMode.levelWalking,
+                          value: EnumSelectMode.levelWalking,
                           groupValue:_enumMode,
                           onChanged: (v) {
                             setState(() {
-                              _enumMode = v ?? EnumMode.levelWalking;
+                              _enumMode = v ?? EnumSelectMode.levelWalking;
                             });
                           },
                         ),
-                        RadioListTile<EnumMode>(
+                        RadioListTile<EnumSelectMode>(
                           title: const Text("계단보행"),
-                          value: EnumMode.stairsWalking,
+                          value: EnumSelectMode.stairsWalking,
                           groupValue:_enumMode,
                           onChanged: (v) {
                             setState(() {
-                              _enumMode = v ?? EnumMode.stairsWalking;
+                              _enumMode = v ?? EnumSelectMode.stairsWalking;
                             });
                           },
                         ),
@@ -748,5 +605,178 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
     );
   }
 
-  EnumMode _enumMode = EnumMode.unselect;
+
+
+  Future connectDevice() async {
+    print("[Call] connectDevice()");
+    FlutterP2pPlus _flutterP2pPlus = ref.read(wifiDirectProvider).flutterP2pPlus;
+    print("[Device] : ${widget.device} | ${widget.device.deviceAddress} | "
+        "${widget.device.deviceName}");
+    try {
+      bool? result = await _flutterP2pPlus.connect(widget.device);
+      print("[connect] result: $result");
+
+      if (result ?? false) {
+        ref.read(p2pDeviceConnectionStateProvider.notifier).state = true;
+      }
+
+      soundChannel = ClientChannel(
+        '192.168.15.240',
+        port: 50052,
+        options: ChannelOptions(
+          credentials: const ChannelCredentials.insecure(),
+          codecRegistry: CodecRegistry(codecs: const [GzipCodec(), IdentityCodec()]),
+        ),
+      );
+      soundStub = SoundClient(soundChannel!);
+
+      _clientChannel = ClientChannel(
+        '192.168.15.240',
+        port: 50051,
+        options: ChannelOptions(
+          credentials: const ChannelCredentials.insecure(),
+          codecRegistry: CodecRegistry(codecs: const [GzipCodec(), IdentityCodec()]),
+        ),
+      );
+      _mobileTransceiverClient = MobileTransceiverClient(_clientChannel!);
+
+    } catch (e) {
+      ref.read(p2pDeviceConnectionStateProvider.notifier).state = false;
+      print(e.toString());
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          content: Text(e.toString()),
+        ),
+      );
+    }
+
+    // await Future.delayed(const Duration(seconds: 10));
+    // await _flutterP2pPlus.stopDiscoverDevices();
+    // await Future.delayed(const Duration(seconds: 3));
+    print("[Info] Completed connectDevice()");
+    setState(() {});
+  }
+
+  void dataHandler(data) {
+    var msg = utf8.decode(data);
+    // var msg = String.fromCharCodes(data).trim();
+    print(msg);
+    var _splitPacket = msg.split("#");
+
+    for (String element in _splitPacket) {
+      print("[Origin Msg] element : $element");
+      if (element.isNotEmpty && element.length > 50) {
+        try {
+          var _msg = BasicMsg.fromJson(jsonDecode(element));
+          // print("[Origin Msg][fromJson] : ${[_msg]}");
+          double diffTime = (_msg.timestamp ?? 0) - (_basicMsg.timestamp ?? 0);
+          _basicMsg = BasicMsg.fromJson(jsonDecode(element));
+          var splitMsgItem = _basicMsg.msg?.split("|") ?? [];
+          // print("splitMsgItem Length : ${splitMsgItem.length}");
+          if (splitMsgItem.length > 1) {
+            String type = splitMsgItem[0];
+            String value = splitMsgItem[1];
+            if (type == "emr") {
+              debugPrint("emr 버튼 패킷 들어옴 ");
+              if (value == "False") {
+                ref.watch(emrButtonStateProvider.notifier).state = false;
+              } else {
+                ref.watch(emrButtonStateProvider.notifier).state = true;
+              }
+            } else if (type == "backpack") {
+              debugPrint("backpack 버튼 패킷 들어옴 ");
+              debugPrint("===== 백팩 버튼 Value: $value");
+              var result = value.substring(1, value.length - 1);
+              // debugPrint(result);
+              var sResult = result.split(",");
+              var filterList = sResult.map((e) => e == "True" ? true : false).toList();
+              debugPrint(filterList.toString());
+              ref.watch(backpackButtonProvider.notifier).state = filterList;
+            } else if (type == "joy") {
+              debugPrint("조이스틱 패킷 들어옴 ");
+              debugPrint("===== 조이스틱 값 Value: $value");
+              var joyParts = value.split("@");
+              var _btnResult = joyParts[0].substring(1, joyParts[0].length - 1);
+              // debugPrint(result);
+              var sResult = _btnResult.split(",");
+              var _filterList = sResult.map((e) => e.trim() == "0" ? true : false).toList();
+              debugPrint("[JoyStick][Buttons] : ${_filterList.toString()}");
+
+              var _axisResult = joyParts[1].substring(1, joyParts[1].length - 1);
+              var _sResult = _axisResult.split(",");
+              var _filterAxisList = _sResult.map((e) => double.parse(e.trim())).toList();
+              ref.watch(joyButtonStateBoolProvider.notifier).updateState(_filterList);
+              ref.watch(joyAxisStateProvider.notifier).updateState(_filterAxisList);
+            }
+          }
+
+          // _sumTotalTime += diffTime;
+          // _sumTotalCount++;
+          ref.watch(p2pSocketInputTimestampProvider.notifier).state = diffTime;
+          // ref.watch(benchmarkPackAvgTime.notifier).state = (_sumTotalTime / _sumTotalCount);
+
+        } catch (e, s) {
+          debugPrint("[Error] 변환 오류 ${e.toString()} , ${s.toString()}");
+        }
+      }
+    }
+
+    // print(String.fromCharCodes(data).trim());
+  }
+
+  void errorHandler(error, StackTrace trace) {
+    print(error);
+  }
+
+  void doneHandler() {
+    print("socket listen onDone(): doneHandler()");
+    _clientSocket?.destroy();
+    _streamSubscription?.cancel().then((value) {
+      _streamSubscription = null;
+    });
+  }
+
+  Future connectSocket() async {
+    var ipAddress = ref.watch(p2pDeviceAddressProvider);
+    _clientSocket =
+    await Socket.connect(ipAddress ?? '192.168.15.240', 8000, timeout: const Duration(seconds: 5)).catchError((e) {
+      print("Unable to connect: $e");
+    });
+    print("_clientSocket: $_clientSocket");
+    if (_clientSocket != null) {
+      setState(() {
+        _isSocketConnected = true;
+      });
+    }
+  }
+
+  Future listenData() async {
+    print("[Call] listenData()");
+    await _streamSubscription?.cancel();
+    _streamSubscription = null;
+    _streamSubscription ??= _clientSocket?.listen(
+      dataHandler,
+      onError: errorHandler,
+      onDone: doneHandler,
+      cancelOnError: false,
+    );
+  }
+
+  Future stopListen() async {
+    try {
+      _clientSocket?.write("end");
+    } catch (e, s) {
+      print("[Error] ${e.toString()}, ${s.toString()}");
+    }
+    // _clientSocket?.listen(dataHandler, onError: errorHandler, onDone: doneHandler, cancelOnError: false);
+  }
+
+  Future startCommend() async {
+    try {
+      _clientSocket?.write("start");
+    } catch (e, s) {
+      print("[Error] ${e.toString()}, ${s.toString()}");
+    }
+  }
 }

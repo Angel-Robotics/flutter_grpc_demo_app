@@ -22,6 +22,11 @@ class MobileTransceiverClient extends $grpc.Client {
       '/mobile_transceiver.MobileTransceiver/SetMode',
       ($0.ModeBlock value) => value.writeToBuffer(),
       ($core.List<$core.int> value) => $0.HelloReply.fromBuffer(value));
+  static final _$sendRobotControl =
+      $grpc.ClientMethod<$0.RobotControl, $0.HelloReply>(
+          '/mobile_transceiver.MobileTransceiver/SendRobotControl',
+          ($0.RobotControl value) => value.writeToBuffer(),
+          ($core.List<$core.int> value) => $0.HelloReply.fromBuffer(value));
 
   MobileTransceiverClient($grpc.ClientChannel channel,
       {$grpc.CallOptions? options,
@@ -36,6 +41,11 @@ class MobileTransceiverClient extends $grpc.Client {
   $grpc.ResponseFuture<$0.HelloReply> setMode($0.ModeBlock request,
       {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$setMode, request, options: options);
+  }
+
+  $grpc.ResponseFuture<$0.HelloReply> sendRobotControl($0.RobotControl request,
+      {$grpc.CallOptions? options}) {
+    return $createUnaryCall(_$sendRobotControl, request, options: options);
   }
 }
 
@@ -57,6 +67,13 @@ abstract class MobileTransceiverServiceBase extends $grpc.Service {
         false,
         ($core.List<$core.int> value) => $0.ModeBlock.fromBuffer(value),
         ($0.HelloReply value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.RobotControl, $0.HelloReply>(
+        'SendRobotControl',
+        sendRobotControl_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) => $0.RobotControl.fromBuffer(value),
+        ($0.HelloReply value) => value.writeToBuffer()));
   }
 
   $async.Future<$0.HelloReply> sayHello_Pre(
@@ -69,8 +86,15 @@ abstract class MobileTransceiverServiceBase extends $grpc.Service {
     return setMode(call, await request);
   }
 
+  $async.Future<$0.HelloReply> sendRobotControl_Pre(
+      $grpc.ServiceCall call, $async.Future<$0.RobotControl> request) async {
+    return sendRobotControl(call, await request);
+  }
+
   $async.Future<$0.HelloReply> sayHello(
       $grpc.ServiceCall call, $0.HelloRequest request);
   $async.Future<$0.HelloReply> setMode(
       $grpc.ServiceCall call, $0.ModeBlock request);
+  $async.Future<$0.HelloReply> sendRobotControl(
+      $grpc.ServiceCall call, $0.RobotControl request);
 }

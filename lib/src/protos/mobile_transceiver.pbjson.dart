@@ -8,6 +8,20 @@
 import 'dart:core' as $core;
 import 'dart:convert' as $convert;
 import 'dart:typed_data' as $typed_data;
+@$core.Deprecated('Use enumRobotControlDescriptor instead')
+const EnumRobotControl$json = const {
+  '1': 'EnumRobotControl',
+  '2': const [
+    const {'1': 'IDLE', '2': 0},
+    const {'1': 'MODE_START', '2': 1},
+    const {'1': 'MODE_PAUSE', '2': 2},
+    const {'1': 'MODE_STOP', '2': 3},
+    const {'1': 'FORCE_STOP', '2': 4},
+  ],
+};
+
+/// Descriptor for `EnumRobotControl`. Decode as a `google.protobuf.EnumDescriptorProto`.
+final $typed_data.Uint8List enumRobotControlDescriptor = $convert.base64Decode('ChBFbnVtUm9ib3RDb250cm9sEggKBElETEUQABIOCgpNT0RFX1NUQVJUEAESDgoKTU9ERV9QQVVTRRACEg0KCU1PREVfU1RPUBADEg4KCkZPUkNFX1NUT1AQBA==');
 @$core.Deprecated('Use enumModeDescriptor instead')
 const EnumMode$json = const {
   '1': 'EnumMode',
@@ -23,6 +37,16 @@ const EnumMode$json = const {
 
 /// Descriptor for `EnumMode`. Decode as a `google.protobuf.EnumDescriptorProto`.
 final $typed_data.Uint8List enumModeDescriptor = $convert.base64Decode('CghFbnVtTW9kZRIMCghNT0RFX1NJVBAAEg4KCk1PREVfU1RBTkQQARIRCg1NT0RFX1NUQU5ESU5HEAISFgoSTU9ERV9MRVZFTF9XQUxLSU5HEAMSDwoLTU9ERV9TVEFJUlMQBBIOCgpNT0RFX1NRVUFUEAU=');
+@$core.Deprecated('Use robotControlDescriptor instead')
+const RobotControl$json = const {
+  '1': 'RobotControl',
+  '2': const [
+    const {'1': 'robotControl', '3': 1, '4': 1, '5': 14, '6': '.mobile_transceiver.EnumRobotControl', '10': 'robotControl'},
+  ],
+};
+
+/// Descriptor for `RobotControl`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List robotControlDescriptor = $convert.base64Decode('CgxSb2JvdENvbnRyb2wSSAoMcm9ib3RDb250cm9sGAEgASgOMiQubW9iaWxlX3RyYW5zY2VpdmVyLkVudW1Sb2JvdENvbnRyb2xSDHJvYm90Q29udHJvbA==');
 @$core.Deprecated('Use modeBlockDescriptor instead')
 const ModeBlock$json = const {
   '1': 'ModeBlock',

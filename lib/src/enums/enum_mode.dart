@@ -1,4 +1,4 @@
-enum EnumMode{
+enum EnumSelectMode{
   unselect,
   sit,
   stand,

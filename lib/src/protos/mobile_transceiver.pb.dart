@@ -13,6 +13,53 @@ import 'mobile_transceiver.pbenum.dart';
 
 export 'mobile_transceiver.pbenum.dart';
 
+class RobotControl extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'RobotControl', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'mobile_transceiver'), createEmptyInstance: create)
+    ..e<EnumRobotControl>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'robotControl', $pb.PbFieldType.OE, protoName: 'robotControl', defaultOrMaker: EnumRobotControl.IDLE, valueOf: EnumRobotControl.valueOf, enumValues: EnumRobotControl.values)
+    ..hasRequiredFields = false
+  ;
+
+  RobotControl._() : super();
+  factory RobotControl({
+    EnumRobotControl? robotControl,
+  }) {
+    final _result = create();
+    if (robotControl != null) {
+      _result.robotControl = robotControl;
+    }
+    return _result;
+  }
+  factory RobotControl.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory RobotControl.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  RobotControl clone() => RobotControl()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  RobotControl copyWith(void Function(RobotControl) updates) => super.copyWith((message) => updates(message as RobotControl)) as RobotControl; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static RobotControl create() => RobotControl._();
+  RobotControl createEmptyInstance() => create();
+  static $pb.PbList<RobotControl> createRepeated() => $pb.PbList<RobotControl>();
+  @$core.pragma('dart2js:noInline')
+  static RobotControl getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<RobotControl>(create);
+  static RobotControl? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  EnumRobotControl get robotControl => $_getN(0);
+  @$pb.TagNumber(1)
+  set robotControl(EnumRobotControl v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasRobotControl() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearRobotControl() => clearField(1);
+}
+
 class ModeBlock extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ModeBlock', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'mobile_transceiver'), createEmptyInstance: create)
     ..e<EnumMode>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'mode', $pb.PbFieldType.OE, defaultOrMaker: EnumMode.MODE_SIT, valueOf: EnumMode.valueOf, enumValues: EnumMode.values)
