@@ -93,15 +93,15 @@ class _DemoHomePageState extends ConsumerState<DeviceScanPage> with WidgetsBindi
                 return Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: GridView.count(
-                    crossAxisCount: 2,
+                    crossAxisCount: 3,
                     crossAxisSpacing: 24,
                     mainAxisSpacing: 24,
-                    childAspectRatio: 0.6,
+                    childAspectRatio: 0.7,
                     children: _devices
                         .map(
                           (e) => GestureDetector(
                             onTap: () async {
-                              if (e.deviceName != "javier") {
+                              if (!e.deviceName.contains("javier") ) {
                                 return;
                               }
                               showDialog(

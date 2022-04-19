@@ -22,147 +22,18 @@ class DeviceConnectionPage extends ConsumerStatefulWidget {
 }
 
 class _DeviceConnectionPageState extends ConsumerState<DeviceConnectionPage> {
-
   ClientChannel? channel;
   GreeterClient? stub;
   M30BackpackIOStreamClient? m30BackpackStub;
 
-  Map<String, StreamSubscription?> _streamSubscriptionMap = {};
-
-  Future connectDevice() async {
-    print("[Call] connectDevice()");
-    FlutterP2pPlus _flutterP2pPlus = ref.read(wifiDirectProvider).flutterP2pPlus;
-    print("[Device] : ${widget.device} | ${widget.device.deviceAddress} | "
-        "${widget.device.deviceName}");
-    try {
-      bool? result = await _flutterP2pPlus.connect(widget.device);
-      print("[connect] result: $result");
-      if (result ?? false) {
-        ref.read(p2pDeviceConnectionStateProvider.notifier).state = true;
-      }
-    } catch (e) {
-      ref.read(p2pDeviceConnectionStateProvider.notifier).state = false;
-      print(e.toString());
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          content: Text(e.toString()),
-        ),
-      );
-    }
-
-    // await Future.delayed(const Duration(seconds: 10));
-    // await _flutterP2pPlus.stopDiscoverDevices();
-    // await Future.delayed(const Duration(seconds: 3));
-    print("[Info] Completed connectDevice()");
-    setState(() {});
-  }
+  final Map<String, StreamSubscription?> _streamSubscriptionMap = {};
+  final StreamController<List<bool>> _streamController = StreamController.broadcast();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     connectDevice();
-  }
-
-
-
-  Future _connectionGrpc() async {
-    print("   widget.device.deviceAddress,: ${widget.device.deviceAddress}");
-    var ipAddress = ref.watch(p2pDeviceAddressProvider);
-    channel = ClientChannel(
-      // '192.168.15.240',
-      ipAddress ?? '192.168.15.240',
-      port: 50051,
-      options: ChannelOptions(
-        credentials: const ChannelCredentials.insecure(),
-        codecRegistry: CodecRegistry(
-          codecs: const [
-            GzipCodec(),
-            IdentityCodec(),
-          ],
-        ),
-      ),
-    );
-
-    stub = GreeterClient(channel!);
-    m30BackpackStub = M30BackpackIOStreamClient(channel!);
-  }
-
-  Future sendSayHello(String args) async {
-    final name = args.isNotEmpty ? args[0] : 'world';
-
-    try {
-      final response = await stub
-          ?.sayHello(
-        HelloRequest()..name = name,
-        options: CallOptions(
-          compression: const GzipCodec(),
-          timeout: const Duration(seconds: 5),
-        ),
-      )
-          .catchError((error, stackTrace) {
-        showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-                  content: Text("${error.toString()}, ${stackTrace.toString()}"),
-                ));
-      });
-      print('Greeter client received: ${response?.message}');
-      Fluttertoast.showToast(msg: "사용 가능");
-    } catch (e) {
-      print('Caught error: $e');
-    }
-  }
-
-  final StreamController<List<bool>> _streamController = StreamController.broadcast();
-
-  Future listenStreams() async {
-    print("[Call] listenStreams()");
-    for (var element in _streamSubscriptionMap.entries) {
-      await _streamSubscriptionMap[element.key]?.cancel();
-      _streamSubscriptionMap[element.key] = null;
-    }
-    _streamSubscriptionMap["joy"] = m30BackpackStub?.streamJoystick(SayRequest()..trigger = true).listen((value) {
-      print("[Listen] value: ${value}");
-    }, onError: (e, c) {
-      print("[Error] ${e.toString()}, ${c.toString()}");
-    })
-      ?..onData((data) {
-        // print(data);
-        print("[onData][JOY] value: ${data.buttons} | ${data.axes}");
-        ref.watch(joyButtonStateProvider.notifier).updateState(data.buttons);
-        ref.watch(joyAxisStateProvider.notifier).updateState(data.axes);
-      });
-
-    _streamSubscriptionMap["emr"] =
-        m30BackpackStub?.streamEmergencyButton(SayRequest()..trigger = true).listen((value) {
-      print("[Listen] value: ${value}");
-    }, onError: (e, c) {
-      print("[Error] ${e.toString()}, ${c.toString()}");
-    })
-          ?..onData((data) {
-            // print(data);
-            print("[onData][EMR] value: ${data}");
-            ref.watch(emrButtonStateProvider.notifier).state = data.emrButton;
-          });
-    _streamSubscriptionMap["backpack"] =
-        m30BackpackStub?.streamBackpackButtons(SayRequest()..trigger = true).listen((value) {
-      print("[Listen] value: ${value}");
-    }, onError: (e, c) {
-      print("[Error] ${e.toString()}, ${c.toString()}");
-    })
-          ?..onData((data) {
-            // print(data);
-            // print("[onData][BACKPACK] value: ${data.buttons}");
-            // ref.watch(backpackButtonProvider.notifier).state = data.buttons;
-            _streamController.sink.add(data.buttons);
-          });
-
-    _streamSubscriptionMap['test_backpack'] ??= _streamController.stream.listen((event) {
-      print(event);
-      ref.watch(backpackButtonProvider.notifier).state = event;
-    });
   }
 
   @override
@@ -320,5 +191,131 @@ class _DeviceConnectionPageState extends ConsumerState<DeviceConnectionPage> {
         ),
       ),
     );
+  }
+
+  Future connectDevice() async {
+    print("[Call] connectDevice()");
+    FlutterP2pPlus _flutterP2pPlus = ref.read(wifiDirectProvider).flutterP2pPlus;
+    print("[Device] : ${widget.device} | ${widget.device.deviceAddress} | "
+        "${widget.device.deviceName}");
+    try {
+      bool? result = await _flutterP2pPlus.connect(widget.device);
+      print("[connect] result: $result");
+      if (result ?? false) {
+        ref.read(p2pDeviceConnectionStateProvider.notifier).state = true;
+      }
+    } catch (e) {
+      ref.read(p2pDeviceConnectionStateProvider.notifier).state = false;
+      print(e.toString());
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          content: Text(e.toString()),
+        ),
+      );
+    }
+
+    // await Future.delayed(const Duration(seconds: 10));
+    // await _flutterP2pPlus.stopDiscoverDevices();
+    // await Future.delayed(const Duration(seconds: 3));
+    print("[Info] Completed connectDevice()");
+    setState(() {});
+  }
+
+  Future _connectionGrpc() async {
+    print("   widget.device.deviceAddress,: ${widget.device.deviceAddress}");
+    var ipAddress = ref.watch(p2pDeviceAddressProvider);
+    channel = ClientChannel(
+      // '192.168.15.240',
+      ipAddress ?? '192.168.15.240',
+      port: 50051,
+      options: ChannelOptions(
+        credentials: const ChannelCredentials.insecure(),
+        codecRegistry: CodecRegistry(
+          codecs: const [
+            GzipCodec(),
+            IdentityCodec(),
+          ],
+        ),
+      ),
+    );
+
+    stub = GreeterClient(channel!);
+    m30BackpackStub = M30BackpackIOStreamClient(channel!);
+  }
+
+  Future sendSayHello(String args) async {
+    final name = args.isNotEmpty ? args[0] : 'world';
+
+    try {
+      final response = await stub
+          ?.sayHello(
+        HelloRequest()..name = name,
+        options: CallOptions(
+          compression: const GzipCodec(),
+          timeout: const Duration(seconds: 5),
+        ),
+      )
+          .catchError((error, stackTrace) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            content: Text("${error.toString()}, ${stackTrace.toString()}"),
+          ),
+        );
+      });
+      print('Greeter client received: ${response?.message}');
+      Fluttertoast.showToast(msg: "사용 가능");
+    } catch (e) {
+      print('Caught error: $e');
+    }
+  }
+
+  Future listenStreams() async {
+    print("[Call] listenStreams()");
+    for (var element in _streamSubscriptionMap.entries) {
+      await _streamSubscriptionMap[element.key]?.cancel();
+      _streamSubscriptionMap[element.key] = null;
+    }
+    _streamSubscriptionMap["joy"] = m30BackpackStub?.streamJoystick(SayRequest()..trigger = true).listen((value) {
+      print("[Listen] value: ${value}");
+    }, onError: (e, c) {
+      print("[Error] ${e.toString()}, ${c.toString()}");
+    })
+      ?..onData((data) {
+        // print(data);
+        print("[onData][JOY] value: ${data.buttons} | ${data.axes}");
+        ref.watch(joyButtonStateProvider.notifier).updateState(data.buttons);
+        ref.watch(joyAxisStateProvider.notifier).updateState(data.axes);
+      });
+
+    _streamSubscriptionMap["emr"] =
+        m30BackpackStub?.streamEmergencyButton(SayRequest()..trigger = true).listen((value) {
+      print("[Listen] value: ${value}");
+    }, onError: (e, c) {
+      print("[Error] ${e.toString()}, ${c.toString()}");
+    })
+          ?..onData((data) {
+            // print(data);
+            print("[onData][EMR] value: ${data}");
+            ref.watch(emrButtonStateProvider.notifier).state = data.emrButton;
+          });
+    _streamSubscriptionMap["backpack"] =
+        m30BackpackStub?.streamBackpackButtons(SayRequest()..trigger = true).listen((value) {
+      print("[Listen] value: ${value}");
+    }, onError: (e, c) {
+      print("[Error] ${e.toString()}, ${c.toString()}");
+    })
+          ?..onData((data) {
+            // print(data);
+            // print("[onData][BACKPACK] value: ${data.buttons}");
+            // ref.watch(backpackButtonProvider.notifier).state = data.buttons;
+            _streamController.sink.add(data.buttons);
+          });
+
+    _streamSubscriptionMap['test_backpack'] ??= _streamController.stream.listen((event) {
+      print(event);
+      ref.watch(backpackButtonProvider.notifier).state = event;
+    });
   }
 }

@@ -9,6 +9,23 @@
 import 'dart:core' as $core;
 import 'package:protobuf/protobuf.dart' as $pb;
 
+class SystemOperationMode extends $pb.ProtobufEnum {
+  static const SystemOperationMode NORMAL = SystemOperationMode._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'NORMAL');
+  static const SystemOperationMode DEBUG = SystemOperationMode._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'DEBUG');
+  static const SystemOperationMode TEST = SystemOperationMode._(2, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'TEST');
+
+  static const $core.List<SystemOperationMode> values = <SystemOperationMode> [
+    NORMAL,
+    DEBUG,
+    TEST,
+  ];
+
+  static final $core.Map<$core.int, SystemOperationMode> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static SystemOperationMode? valueOf($core.int value) => _byValue[value];
+
+  const SystemOperationMode._($core.int v, $core.String n) : super(v, n);
+}
+
 class EnumRobotControl extends $pb.ProtobufEnum {
   static const EnumRobotControl IDLE = EnumRobotControl._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'IDLE');
   static const EnumRobotControl MODE_START = EnumRobotControl._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'MODE_START');
@@ -51,5 +68,24 @@ class EnumMode extends $pb.ProtobufEnum {
   static EnumMode? valueOf($core.int value) => _byValue[value];
 
   const EnumMode._($core.int v, $core.String n) : super(v, n);
+}
+
+class RhythmControl extends $pb.ProtobufEnum {
+  static const RhythmControl PLAY_IDLE = RhythmControl._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'PLAY_IDLE');
+  static const RhythmControl PLAY_START = RhythmControl._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'PLAY_START');
+  static const RhythmControl PLAY_PAUSE = RhythmControl._(2, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'PLAY_PAUSE');
+  static const RhythmControl PLAY_STOP = RhythmControl._(3, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'PLAY_STOP');
+
+  static const $core.List<RhythmControl> values = <RhythmControl> [
+    PLAY_IDLE,
+    PLAY_START,
+    PLAY_PAUSE,
+    PLAY_STOP,
+  ];
+
+  static final $core.Map<$core.int, RhythmControl> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static RhythmControl? valueOf($core.int value) => _byValue[value];
+
+  const RhythmControl._($core.int v, $core.String n) : super(v, n);
 }
 

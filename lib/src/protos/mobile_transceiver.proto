@@ -1,13 +1,28 @@
 syntax = "proto3";
 
-package mobile_transceiver;
+option java_multiple_files = true;
+option java_package = "io.grpc.agr.m30";
+option java_outer_classname = "MobileTransceiverProto";
+option objc_class_prefix = "MT";
 
+package mobile_transceiver;
+// protoc mobile_transceiver.proto --dart_out=grpc:. --proto_path=.
 // The greeting service definition.
 service MobileTransceiver {
   // Sends a greeting
   rpc SayHello (HelloRequest) returns (HelloReply) {}
   rpc SetMode(ModeBlock) returns (HelloReply){}
   rpc SendRobotControl(RobotControl) returns(HelloReply){}
+  rpc SendSystemOperationMode(MsgSystemOpMode) returns (HelloReply){}
+  rpc SendModeSettings(MsgModeSettings) returns (HelloReply){}
+  rpc SendRhythmControl(MsgRhythmPlayControl)returns(HelloReply){}
+  rpc SendRobotSize(MsgRobotSize)  returns (HelloReply){}
+}
+
+enum SystemOperationMode{
+  NORMAL = 0;
+  DEBUG = 1;
+  TEST = 2;
 }
 
 enum EnumRobotControl{
@@ -27,13 +42,53 @@ enum EnumMode{
   MODE_SQUAT = 5;
 }
 
+enum RhythmControl{
+  PLAY_IDLE = 0;
+  PLAY_START = 1;
+  PLAY_PAUSE = 2;
+  PLAY_STOP = 3;
+}
+
 message RobotControl{
   EnumRobotControl robotControl = 1;
 }
+
 message ModeBlock{
   EnumMode mode = 1;
-
 }
+
+message MsgSystemOpMode{
+  SystemOperationMode mode = 1;
+}
+
+//https://developers.google.com/protocol-buffers/docs/style
+message MsgModeSettings{
+  EnumMode mode = 1; // 설정 모드
+  int32 op_control_algorithm = 2; // 알고리즘
+  repeated uint32 left_torque_level = 3; // 보조력 왼쪽
+  repeated uint32 right_torque_level = 4; // 보조력 오른쪽
+  repeated uint32 support_duration = 5; //보조력 유지시간 좌/우
+  repeated uint32 sensitivity = 6; //민감도  좌/우
+  repeated uint32 stance_support = 7; //입각기 굽힘 방지 좌/우
+  repeated bool terminal_support = 8;//유각기 말기
+  repeated bool button_control = 9; // 가이드 조작
+  repeated sint32 aim_hip_angle = 10; // 목표 힙 각도
+  bool keep_standing_support = 11; //일어서기 후 힘유지
+  bool weight_bearing = 12;
+  int32 bpm = 13; // 리듬청각자극 훈련
+}
+
+message MsgRhythmPlayControl{
+  RhythmControl rhythmControl = 1;
+}
+
+message MsgRobotSize{
+  int32 leftThighLength = 1;
+  int32 leftShankLength = 2;
+  int32 rightThighLength = 3;
+  int32 rightShankLength = 4;
+}
+
 // The request message containing the user's name.
 message HelloRequest {
   string name = 1;
@@ -43,3 +98,6 @@ message HelloRequest {
 message HelloReply {
   string message = 1;
 }
+
+// 로봇사이즈의 경우 허벅지의 길이 , 종아리의 길이  shank
+// 구동력의 경우 관절에 영향이 있음으로 고관절(엉덩관절), 슬관절(무릎관절)
