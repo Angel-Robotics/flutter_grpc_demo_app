@@ -12,60 +12,7 @@ part of 'user_mode_settings_v2.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more informations: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
-
-/// @nodoc
-class _$UserModeSettingsV2TearOff {
-  const _$UserModeSettingsV2TearOff();
-
-  _UserModeSettingsV2 call(
-      {int? leftHipExtensionTorqueLevel,
-      int? leftHipFlexionTorqueLevel,
-      int? rightHipExtensionTorqueLevel,
-      int? rightHipFlexionTorqueLevel,
-      int? leftKneeExtensionTorqueLevel,
-      int? leftKneeFlexionTorqueLevel,
-      int? rightKneeExtensionTorqueLevel,
-      int? rightKneeFlexionTorqueLevel,
-      bool? keepStanding,
-      List<int> leftTorqueLevel = const [10, 10, 10, 10],
-      List<int> rightTorqueLevel = const [10, 10, 10, 10],
-      List<bool> btnControl = const [false, false],
-      List<bool> terminalSupport = const [false, false],
-      List<int> supportDuration = const [0, 0],
-      List<int> stanceSupport = const [0, 0],
-      List<int> sensitivity = const [2, 2],
-      double? bpm,
-      List<int> targetHipDegree = const [0, 0],
-      bool? weightBearing,
-      int? controlAlgorithm}) {
-    return _UserModeSettingsV2(
-      leftHipExtensionTorqueLevel: leftHipExtensionTorqueLevel,
-      leftHipFlexionTorqueLevel: leftHipFlexionTorqueLevel,
-      rightHipExtensionTorqueLevel: rightHipExtensionTorqueLevel,
-      rightHipFlexionTorqueLevel: rightHipFlexionTorqueLevel,
-      leftKneeExtensionTorqueLevel: leftKneeExtensionTorqueLevel,
-      leftKneeFlexionTorqueLevel: leftKneeFlexionTorqueLevel,
-      rightKneeExtensionTorqueLevel: rightKneeExtensionTorqueLevel,
-      rightKneeFlexionTorqueLevel: rightKneeFlexionTorqueLevel,
-      keepStanding: keepStanding,
-      leftTorqueLevel: leftTorqueLevel,
-      rightTorqueLevel: rightTorqueLevel,
-      btnControl: btnControl,
-      terminalSupport: terminalSupport,
-      supportDuration: supportDuration,
-      stanceSupport: stanceSupport,
-      sensitivity: sensitivity,
-      bpm: bpm,
-      targetHipDegree: targetHipDegree,
-      weightBearing: weightBearing,
-      controlAlgorithm: controlAlgorithm,
-    );
-  }
-}
-
-/// @nodoc
-const $UserModeSettingsV2 = _$UserModeSettingsV2TearOff();
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 /// @nodoc
 mixin _$UserModeSettingsV2 {
@@ -410,17 +357,25 @@ class _$_UserModeSettingsV2 implements _UserModeSettingsV2 {
       this.rightKneeExtensionTorqueLevel,
       this.rightKneeFlexionTorqueLevel,
       this.keepStanding,
-      this.leftTorqueLevel = const [10, 10, 10, 10],
-      this.rightTorqueLevel = const [10, 10, 10, 10],
-      this.btnControl = const [false, false],
-      this.terminalSupport = const [false, false],
-      this.supportDuration = const [0, 0],
-      this.stanceSupport = const [0, 0],
-      this.sensitivity = const [2, 2],
+      final List<int> leftTorqueLevel = const [10, 10, 10, 10],
+      final List<int> rightTorqueLevel = const [10, 10, 10, 10],
+      final List<bool> btnControl = const [false, false],
+      final List<bool> terminalSupport = const [false, false],
+      final List<int> supportDuration = const [0, 0],
+      final List<int> stanceSupport = const [0, 0],
+      final List<int> sensitivity = const [2, 2],
       this.bpm,
-      this.targetHipDegree = const [0, 0],
+      final List<int> targetHipDegree = const [0, 0],
       this.weightBearing,
-      this.controlAlgorithm});
+      this.controlAlgorithm})
+      : _leftTorqueLevel = leftTorqueLevel,
+        _rightTorqueLevel = rightTorqueLevel,
+        _btnControl = btnControl,
+        _terminalSupport = terminalSupport,
+        _supportDuration = supportDuration,
+        _stanceSupport = stanceSupport,
+        _sensitivity = sensitivity,
+        _targetHipDegree = targetHipDegree;
 
   @override
   final int? leftHipExtensionTorqueLevel;
@@ -440,8 +395,7 @@ class _$_UserModeSettingsV2 implements _UserModeSettingsV2 {
   final int? rightKneeFlexionTorqueLevel;
   @override
   final bool? keepStanding;
-  @JsonKey()
-  @override // int? leftSensitivity,
+// int? leftSensitivity,
 // int? rightSensitivity,
 // int? leftDuration,
 // int? rightDuration,
@@ -449,30 +403,80 @@ class _$_UserModeSettingsV2 implements _UserModeSettingsV2 {
 // int? rightStanceSupport,
 // bool? terminalSupport,
 // bool? btnControl,
-  final List<int> leftTorqueLevel;
-  @JsonKey()
+  final List<int> _leftTorqueLevel;
+// int? leftSensitivity,
+// int? rightSensitivity,
+// int? leftDuration,
+// int? rightDuration,
+// int? leftStanceSupport,
+// int? rightStanceSupport,
+// bool? terminalSupport,
+// bool? btnControl,
   @override
-  final List<int> rightTorqueLevel;
   @JsonKey()
+  List<int> get leftTorqueLevel {
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_leftTorqueLevel);
+  }
+
+  final List<int> _rightTorqueLevel;
   @override
-  final List<bool> btnControl;
   @JsonKey()
+  List<int> get rightTorqueLevel {
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_rightTorqueLevel);
+  }
+
+  final List<bool> _btnControl;
   @override
-  final List<bool> terminalSupport;
   @JsonKey()
+  List<bool> get btnControl {
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_btnControl);
+  }
+
+  final List<bool> _terminalSupport;
   @override
-  final List<int> supportDuration;
   @JsonKey()
+  List<bool> get terminalSupport {
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_terminalSupport);
+  }
+
+  final List<int> _supportDuration;
   @override
-  final List<int> stanceSupport;
   @JsonKey()
+  List<int> get supportDuration {
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_supportDuration);
+  }
+
+  final List<int> _stanceSupport;
   @override
-  final List<int> sensitivity;
+  @JsonKey()
+  List<int> get stanceSupport {
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_stanceSupport);
+  }
+
+  final List<int> _sensitivity;
+  @override
+  @JsonKey()
+  List<int> get sensitivity {
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_sensitivity);
+  }
+
   @override
   final double? bpm;
-  @JsonKey()
+  final List<int> _targetHipDegree;
   @override
-  final List<int> targetHipDegree;
+  @JsonKey()
+  List<int> get targetHipDegree {
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_targetHipDegree);
+  }
+
   @override
   final bool? weightBearing;
   @override
@@ -567,45 +571,45 @@ class _$_UserModeSettingsV2 implements _UserModeSettingsV2 {
 
 abstract class _UserModeSettingsV2 implements UserModeSettingsV2 {
   factory _UserModeSettingsV2(
-      {int? leftHipExtensionTorqueLevel,
-      int? leftHipFlexionTorqueLevel,
-      int? rightHipExtensionTorqueLevel,
-      int? rightHipFlexionTorqueLevel,
-      int? leftKneeExtensionTorqueLevel,
-      int? leftKneeFlexionTorqueLevel,
-      int? rightKneeExtensionTorqueLevel,
-      int? rightKneeFlexionTorqueLevel,
-      bool? keepStanding,
-      List<int> leftTorqueLevel,
-      List<int> rightTorqueLevel,
-      List<bool> btnControl,
-      List<bool> terminalSupport,
-      List<int> supportDuration,
-      List<int> stanceSupport,
-      List<int> sensitivity,
-      double? bpm,
-      List<int> targetHipDegree,
-      bool? weightBearing,
-      int? controlAlgorithm}) = _$_UserModeSettingsV2;
+      {final int? leftHipExtensionTorqueLevel,
+      final int? leftHipFlexionTorqueLevel,
+      final int? rightHipExtensionTorqueLevel,
+      final int? rightHipFlexionTorqueLevel,
+      final int? leftKneeExtensionTorqueLevel,
+      final int? leftKneeFlexionTorqueLevel,
+      final int? rightKneeExtensionTorqueLevel,
+      final int? rightKneeFlexionTorqueLevel,
+      final bool? keepStanding,
+      final List<int> leftTorqueLevel,
+      final List<int> rightTorqueLevel,
+      final List<bool> btnControl,
+      final List<bool> terminalSupport,
+      final List<int> supportDuration,
+      final List<int> stanceSupport,
+      final List<int> sensitivity,
+      final double? bpm,
+      final List<int> targetHipDegree,
+      final bool? weightBearing,
+      final int? controlAlgorithm}) = _$_UserModeSettingsV2;
 
   @override
-  int? get leftHipExtensionTorqueLevel;
+  int? get leftHipExtensionTorqueLevel => throw _privateConstructorUsedError;
   @override
-  int? get leftHipFlexionTorqueLevel;
+  int? get leftHipFlexionTorqueLevel => throw _privateConstructorUsedError;
   @override
-  int? get rightHipExtensionTorqueLevel;
+  int? get rightHipExtensionTorqueLevel => throw _privateConstructorUsedError;
   @override
-  int? get rightHipFlexionTorqueLevel;
+  int? get rightHipFlexionTorqueLevel => throw _privateConstructorUsedError;
   @override
-  int? get leftKneeExtensionTorqueLevel;
+  int? get leftKneeExtensionTorqueLevel => throw _privateConstructorUsedError;
   @override
-  int? get leftKneeFlexionTorqueLevel;
+  int? get leftKneeFlexionTorqueLevel => throw _privateConstructorUsedError;
   @override
-  int? get rightKneeExtensionTorqueLevel;
+  int? get rightKneeExtensionTorqueLevel => throw _privateConstructorUsedError;
   @override
-  int? get rightKneeFlexionTorqueLevel;
+  int? get rightKneeFlexionTorqueLevel => throw _privateConstructorUsedError;
   @override
-  bool? get keepStanding;
+  bool? get keepStanding => throw _privateConstructorUsedError;
   @override // int? leftSensitivity,
 // int? rightSensitivity,
 // int? leftDuration,
@@ -614,27 +618,27 @@ abstract class _UserModeSettingsV2 implements UserModeSettingsV2 {
 // int? rightStanceSupport,
 // bool? terminalSupport,
 // bool? btnControl,
-  List<int> get leftTorqueLevel;
+  List<int> get leftTorqueLevel => throw _privateConstructorUsedError;
   @override
-  List<int> get rightTorqueLevel;
+  List<int> get rightTorqueLevel => throw _privateConstructorUsedError;
   @override
-  List<bool> get btnControl;
+  List<bool> get btnControl => throw _privateConstructorUsedError;
   @override
-  List<bool> get terminalSupport;
+  List<bool> get terminalSupport => throw _privateConstructorUsedError;
   @override
-  List<int> get supportDuration;
+  List<int> get supportDuration => throw _privateConstructorUsedError;
   @override
-  List<int> get stanceSupport;
+  List<int> get stanceSupport => throw _privateConstructorUsedError;
   @override
-  List<int> get sensitivity;
+  List<int> get sensitivity => throw _privateConstructorUsedError;
   @override
-  double? get bpm;
+  double? get bpm => throw _privateConstructorUsedError;
   @override
-  List<int> get targetHipDegree;
+  List<int> get targetHipDegree => throw _privateConstructorUsedError;
   @override
-  bool? get weightBearing;
+  bool? get weightBearing => throw _privateConstructorUsedError;
   @override
-  int? get controlAlgorithm;
+  int? get controlAlgorithm => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
   _$UserModeSettingsV2CopyWith<_UserModeSettingsV2> get copyWith =>

@@ -12,24 +12,7 @@ part of 'robot_size.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more informations: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
-
-/// @nodoc
-class _$RobotSizeTearOff {
-  const _$RobotSizeTearOff();
-
-  _RobotSize call({int? lh, int? lk, int? rh, int? rk}) {
-    return _RobotSize(
-      lh: lh,
-      lk: lk,
-      rh: rh,
-      rk: rk,
-    );
-  }
-}
-
-/// @nodoc
-const $RobotSize = _$RobotSizeTearOff();
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 /// @nodoc
 mixin _$RobotSize {
@@ -177,16 +160,20 @@ class _$_RobotSize implements _RobotSize {
 }
 
 abstract class _RobotSize implements RobotSize {
-  factory _RobotSize({int? lh, int? lk, int? rh, int? rk}) = _$_RobotSize;
+  factory _RobotSize(
+      {final int? lh,
+      final int? lk,
+      final int? rh,
+      final int? rk}) = _$_RobotSize;
 
   @override
-  int? get lh;
+  int? get lh => throw _privateConstructorUsedError;
   @override
-  int? get lk;
+  int? get lk => throw _privateConstructorUsedError;
   @override
-  int? get rh;
+  int? get rh => throw _privateConstructorUsedError;
   @override
-  int? get rk;
+  int? get rk => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
   _$RobotSizeCopyWith<_RobotSize> get copyWith =>

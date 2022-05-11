@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_grpc_demo_app/src/enums/enum_mode.dart';
 import 'package:flutter_grpc_demo_app/src/model/basic_msg.dart';
+import 'package:flutter_grpc_demo_app/src/model/encoder_raw.dart';
 import 'package:flutter_grpc_demo_app/src/model/user_mode_settings.dart';
 import 'package:flutter_grpc_demo_app/src/protos/helloworld.pbgrpc.dart';
 import 'package:flutter_grpc_demo_app/src/protos/m30_backpack_stream.pbgrpc.dart';
@@ -15,6 +16,7 @@ import 'package:flutter_grpc_demo_app/src/protos/sound.pb.dart';
 import 'package:flutter_grpc_demo_app/src/protos/sound.pbgrpc.dart';
 import 'package:flutter_grpc_demo_app/src/provider/backpack_button_provider.dart';
 import 'package:flutter_grpc_demo_app/src/provider/emr_button_state_provider.dart';
+import 'package:flutter_grpc_demo_app/src/provider/encoder_raw_controller.dart';
 import 'package:flutter_grpc_demo_app/src/provider/joystick_state_provider.dart';
 import 'package:flutter_grpc_demo_app/src/provider/mode_setting_provider.dart';
 import 'package:flutter_grpc_demo_app/src/provider/robot_size_provider.dart';
@@ -119,6 +121,7 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
+                          flex: 4,
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Scrollbar(
@@ -283,135 +286,171 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
                           color: Colors.black,
                         ),
                         Expanded(
+                          flex: 15,
                           child: SingleChildScrollView(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(
-                                  height: 240,
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Consumer(
-                                          builder: (BuildContext context, WidgetRef ref, Widget? child) {
-                                            final emrState = ref.watch(emrButtonStateProvider);
-                                            return Container(
-                                              height: double.infinity,
-                                              decoration: BoxDecoration(
-                                                color: emrState ? Colors.green : Colors.red,
-                                              ),
-                                              child: const Center(
-                                                  child: Text(
-                                                "비상버튼",
-                                              )),
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 16,
-                                      ),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            const Text(
-                                              "백팩 버튼",
-                                              style: TextStyle(
-                                                fontSize: 24,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            Expanded(
-                                              child: Consumer(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Consumer(builder: (context,ref, _){
+                                    final time = ref.watch(p2pSocketInputTimestampProvider);
+                                    final time2 = ref.watch(benchmarkPackAvgTime);
+                                    return Text("${time} ms / ${time2} ms");
+
+                                  }),
+                                  SizedBox(
+                                    height: 300,
+                                    width: double.infinity,
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            children: [
+                                              Consumer(
                                                 builder: (BuildContext context, WidgetRef ref, Widget? child) {
-                                                  final backpackState = ref.watch(backpackButtonProvider);
-                                                  return GridView.count(
-                                                    crossAxisCount: 2,
-                                                    mainAxisSpacing: 16,
-                                                    crossAxisSpacing: 16,
-                                                    childAspectRatio: 1.8,
-                                                    children: backpackState
-                                                        .map((e) => Container(
-                                                            decoration: BoxDecoration(
-                                                              color: e ? Colors.red : Colors.green,
-                                                            ),
-                                                            child: const Text("")))
-                                                        .toList(),
+                                                  final emrState = ref.watch(emrButtonStateProvider);
+                                                  return Container(
+                                                    decoration: BoxDecoration(
+                                                      color: emrState ? Colors.green : Colors.red,
+                                                    ),
+                                                    padding: EdgeInsets.all(24),
+                                                    child: const Center(
+                                                      child: Text(
+                                                        "비상버튼",
+                                                      ),
+                                                    ),
                                                   );
                                                 },
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 24,
-                                ),
-                                const Text(
-                                  "조이스틱 컨트롤러",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Consumer(builder: (context, ref, _) {
-                                  final joy = ref.watch(joyButtonStateBoolProvider);
-                                  return Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: GridView.count(
-                                      shrinkWrap: true,
-                                      crossAxisCount: 4,
-                                      crossAxisSpacing: 8,
-                                      mainAxisSpacing: 8,
-                                      childAspectRatio: 1,
-                                      children: joy
-                                          .map(
-                                            (e) => Container(
-                                              decoration: BoxDecoration(
-                                                color: e ? Colors.red : Colors.green,
-                                              ),
-                                            ),
-                                          )
-                                          .toList(),
-                                    ),
-                                  );
-                                }),
-                                Consumer(builder: (context, ref, _) {
-                                  final joy = ref.watch(joyAxisStateProvider);
-                                  return Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: GridView.count(
-                                      shrinkWrap: true,
-                                      crossAxisCount: 4,
-                                      crossAxisSpacing: 8,
-                                      mainAxisSpacing: 8,
-                                      childAspectRatio: 1,
-                                      children: joy
-                                          .map(
-                                            (e) => Container(
-                                              decoration: BoxDecoration(
-                                                border: Border.all(),
-                                              ),
-                                              padding: const EdgeInsets.all(8),
-                                              child: Center(
-                                                child: Text(
-                                                  e.toStringAsFixed(6),
-                                                  style: const TextStyle(
-                                                    fontSize: 20,
+                                              Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  const Text(
+                                                    "백팩 버튼",
+                                                    style: TextStyle(
+                                                      fontSize: 24,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
                                                   ),
+                                                  Consumer(
+                                                    builder: (BuildContext context, WidgetRef ref, Widget? child) {
+                                                      final backpackState = ref.watch(backpackButtonProvider);
+                                                      return GridView.count(
+                                                        shrinkWrap: true,
+                                                        crossAxisCount: 2,
+                                                        mainAxisSpacing: 16,
+                                                        crossAxisSpacing: 16,
+                                                        // childAspectRatio: 1.8,
+                                                        childAspectRatio: 3,
+                                                        children: backpackState
+                                                            .map((e) => Container(
+                                                                decoration: BoxDecoration(
+                                                                  color: e ? Colors.red : Colors.green,
+                                                                ),
+                                                                child: const Text("")))
+                                                            .toList(),
+                                                      );
+                                                    },
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 2,
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              const Text(
+                                                "조이스틱 컨트롤러",
+                                                style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
                                                 ),
                                               ),
-                                            ),
-                                          )
-                                          .toList(),
+                                              Consumer(builder: (context, ref, _) {
+                                                final joy = ref.watch(joyButtonStateBoolProvider);
+                                                return Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: GridView.count(
+                                                    shrinkWrap: true,
+                                                    crossAxisCount: 8,
+                                                    crossAxisSpacing: 8,
+                                                    mainAxisSpacing: 8,
+                                                    childAspectRatio: 1,
+                                                    children: joy
+                                                        .map(
+                                                          (e) => Container(
+                                                            decoration: BoxDecoration(
+                                                              color: e ? Colors.red : Colors.green,
+                                                            ),
+                                                          ),
+                                                        )
+                                                        .toList(),
+                                                  ),
+                                                );
+                                              }),
+                                              Consumer(builder: (context, ref, _) {
+                                                final joy = ref.watch(joyAxisStateProvider);
+                                                return Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: GridView.count(
+                                                    shrinkWrap: true,
+                                                    crossAxisCount: 8,
+                                                    crossAxisSpacing: 8,
+                                                    mainAxisSpacing: 8,
+                                                    childAspectRatio: 1,
+                                                    children: joy
+                                                        .map(
+                                                          (e) => Container(
+                                                            decoration: BoxDecoration(
+                                                              border: Border.all(),
+                                                            ),
+                                                            padding: const EdgeInsets.all(8),
+                                                            child: Center(
+                                                              child: Text(
+                                                                e.toStringAsFixed(6),
+                                                                style: const TextStyle(
+                                                                  fontSize: 12,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        )
+                                                        .toList(),
+                                                  ),
+                                                );
+                                              }),
+                                            ],
+                                          ),
+                                        )
+                                      ],
                                     ),
-                                  );
-                                }),
-                              ],
+                                  ),
+                                  const SizedBox(
+                                    height: 24,
+                                  ),
+                                  Divider(),
+                                  SizedBox(
+                                    height: 200,
+                                    child: Consumer(
+                                      builder: (context, ref, _) {
+                                        final encoderRaw = ref.watch(encoderRawProvider);
+                                        return ListView.builder(
+                                            itemCount: encoderRaw.layout.dim?.length,
+                                            itemBuilder: (context, index) {
+                                              var item = encoderRaw.layout.dim;
+                                              // print(encoderRaw.data?[index]);
+                                              return Text("${item?[index].label} : ${encoderRaw.data?[index]}");
+                                            });
+                                      },
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -823,7 +862,9 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
         port: 50051,
         options: ChannelOptions(
           // credentials: const ChannelCredentials.insecure(),
-          credentials: ChannelCredentials.secure(certificates: cert,),
+          credentials: ChannelCredentials.secure(
+            certificates: cert,
+          ),
           codecRegistry: CodecRegistry(codecs: const [GzipCodec(), IdentityCodec()]),
         ),
       );
@@ -946,20 +987,53 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
     }
   }
 
+  double _sumTotalTime = 0.0;
+  int _sumTotalCount = 0;
+
   void dataHandler(data) {
     var msg = utf8.decode(data);
     // var msg = String.fromCharCodes(data).trim();
-    print(msg);
+    // print("[받은 처음 메세지] [디코드] $data");
+    // print("[받은 처음 메세지] [디코드] $msg");
     var _splitPacket = msg.split("#");
 
-    for (String element in _splitPacket) {
-      print("[Origin Msg] element : $element");
-      if (element.isNotEmpty && element.length > 50) {
+    // print("[_splitPacket] : ${_splitPacket}");
+    // List<String> paddingElements = [];
+    String paddingElement = "";
+    bool _isError = false;
+    for (int i = 0; i < _splitPacket.length; i++) {
+      String element = _splitPacket[i];
+      // print("[Origin Msg] $i: $element");
+      // print(element.length);
+      Map<String, dynamic> _decodeMsg = {};
+      if(element.isNotEmpty){
         try {
-          var _msg = BasicMsg.fromJson(jsonDecode(element));
+          _decodeMsg = jsonDecode(element);
+          paddingElement = element;
+          _isError = false;
+        } catch (e) {
+          // print("[Error] jsonDecode error: $e");
+          _isError = true;
+          if (i == (_splitPacket.length - 1)) {
+            paddingElement = element;
+          } else {
+            paddingElement += element;
+          }
+          // print("[paddingElement]: ${paddingElement}");
+        }
+      }
+
+      // print(paddingElement);
+      // print("[_isError]: $i | ${_splitPacket.length - 1} | $_isError");
+      if (paddingElement.isNotEmpty && !(_isError)) {
+        _isError = false;
+        // print("[paddingElement]: $i | ${_splitPacket.length - 1} | ${paddingElement}");
+        try {
+          _decodeMsg = jsonDecode(paddingElement);
+          var _msg = BasicMsg.fromJson(_decodeMsg);
           // print("[Origin Msg][fromJson] : ${[_msg]}");
           double diffTime = (_msg.timestamp ?? 0) - (_basicMsg.timestamp ?? 0);
-          _basicMsg = BasicMsg.fromJson(jsonDecode(element));
+          _basicMsg = BasicMsg.fromJson(_decodeMsg);
           var splitMsgItem = _basicMsg.msg?.split("|") ?? [];
           // print("splitMsgItem Length : ${splitMsgItem.length}");
           if (splitMsgItem.length > 1) {
@@ -996,16 +1070,23 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
               var _filterAxisList = _sResult.map((e) => double.parse(e.trim())).toList();
               ref.watch(joyButtonStateBoolProvider.notifier).updateState(_filterList);
               ref.watch(joyAxisStateProvider.notifier).updateState(_filterAxisList);
+            } else if (type == "debug_encoder_raw") {
+              // debugPrint("[디버그] 엔코더 값 들어옴 ");
+              // debugPrint("===== 디버그 버튼 Value: $value");
+              final encoderRaw = EncoderRaw.fromJson(jsonDecode(value));
+              // print("[data]: ${encoderRaw.data}");
+              // print("[data]: ${encoderRaw.layout.toString()}");
+              ref.read(encoderRawProvider.notifier).state = encoderRaw;
             }
           }
 
-          // _sumTotalTime += diffTime;
-          // _sumTotalCount++;
-          ref.watch(p2pSocketInputTimestampProvider.notifier).state = diffTime;
-          // ref.watch(benchmarkPackAvgTime.notifier).state = (_sumTotalTime / _sumTotalCount);
-
+          _sumTotalTime += diffTime;
+          _sumTotalCount++;
+          ref.read(p2pSocketInputTimestampProvider.notifier).state = diffTime;
+          ref.read(benchmarkPackAvgTime.notifier).state = (_sumTotalTime / _sumTotalCount);
         } catch (e, s) {
-          debugPrint("[Error] 변환 오류 ${e.toString()} , ${s.toString()}");
+          // debugPrint("[Error] 변환 오류 ${e.toString()} , ${s.toString()}");
+          print("[Error] index: ${_splitPacket.length - 1} | $i");
         }
       }
     }
