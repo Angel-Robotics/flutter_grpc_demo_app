@@ -22,7 +22,6 @@ class UserModeSettings with _$UserModeSettings {
     int? rightStanceSupport,
     bool? terminalSupport,
     bool? btnControl,
-
     @Default([10, 10, 10, 10]) List<int> leftTorqueLevel,
     @Default([10, 10, 10, 10]) List<int> rightTorqueLevel,
     // @Default([false, false]) List<bool> btnControl,

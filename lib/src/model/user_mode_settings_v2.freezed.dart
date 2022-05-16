@@ -196,11 +196,11 @@ class _$UserModeSettingsV2CopyWithImpl<$Res>
 }
 
 /// @nodoc
-abstract class _$UserModeSettingsV2CopyWith<$Res>
+abstract class _$$_UserModeSettingsV2CopyWith<$Res>
     implements $UserModeSettingsV2CopyWith<$Res> {
-  factory _$UserModeSettingsV2CopyWith(
-          _UserModeSettingsV2 value, $Res Function(_UserModeSettingsV2) then) =
-      __$UserModeSettingsV2CopyWithImpl<$Res>;
+  factory _$$_UserModeSettingsV2CopyWith(_$_UserModeSettingsV2 value,
+          $Res Function(_$_UserModeSettingsV2) then) =
+      __$$_UserModeSettingsV2CopyWithImpl<$Res>;
   @override
   $Res call(
       {int? leftHipExtensionTorqueLevel,
@@ -226,15 +226,15 @@ abstract class _$UserModeSettingsV2CopyWith<$Res>
 }
 
 /// @nodoc
-class __$UserModeSettingsV2CopyWithImpl<$Res>
+class __$$_UserModeSettingsV2CopyWithImpl<$Res>
     extends _$UserModeSettingsV2CopyWithImpl<$Res>
-    implements _$UserModeSettingsV2CopyWith<$Res> {
-  __$UserModeSettingsV2CopyWithImpl(
-      _UserModeSettingsV2 _value, $Res Function(_UserModeSettingsV2) _then)
-      : super(_value, (v) => _then(v as _UserModeSettingsV2));
+    implements _$$_UserModeSettingsV2CopyWith<$Res> {
+  __$$_UserModeSettingsV2CopyWithImpl(
+      _$_UserModeSettingsV2 _value, $Res Function(_$_UserModeSettingsV2) _then)
+      : super(_value, (v) => _then(v as _$_UserModeSettingsV2));
 
   @override
-  _UserModeSettingsV2 get _value => super._value as _UserModeSettingsV2;
+  _$_UserModeSettingsV2 get _value => super._value as _$_UserModeSettingsV2;
 
   @override
   $Res call({
@@ -259,7 +259,7 @@ class __$UserModeSettingsV2CopyWithImpl<$Res>
     Object? weightBearing = freezed,
     Object? controlAlgorithm = freezed,
   }) {
-    return _then(_UserModeSettingsV2(
+    return _then(_$_UserModeSettingsV2(
       leftHipExtensionTorqueLevel: leftHipExtensionTorqueLevel == freezed
           ? _value.leftHipExtensionTorqueLevel
           : leftHipExtensionTorqueLevel // ignore: cast_nullable_to_non_nullable
@@ -297,31 +297,31 @@ class __$UserModeSettingsV2CopyWithImpl<$Res>
           : keepStanding // ignore: cast_nullable_to_non_nullable
               as bool?,
       leftTorqueLevel: leftTorqueLevel == freezed
-          ? _value.leftTorqueLevel
+          ? _value._leftTorqueLevel
           : leftTorqueLevel // ignore: cast_nullable_to_non_nullable
               as List<int>,
       rightTorqueLevel: rightTorqueLevel == freezed
-          ? _value.rightTorqueLevel
+          ? _value._rightTorqueLevel
           : rightTorqueLevel // ignore: cast_nullable_to_non_nullable
               as List<int>,
       btnControl: btnControl == freezed
-          ? _value.btnControl
+          ? _value._btnControl
           : btnControl // ignore: cast_nullable_to_non_nullable
               as List<bool>,
       terminalSupport: terminalSupport == freezed
-          ? _value.terminalSupport
+          ? _value._terminalSupport
           : terminalSupport // ignore: cast_nullable_to_non_nullable
               as List<bool>,
       supportDuration: supportDuration == freezed
-          ? _value.supportDuration
+          ? _value._supportDuration
           : supportDuration // ignore: cast_nullable_to_non_nullable
               as List<int>,
       stanceSupport: stanceSupport == freezed
-          ? _value.stanceSupport
+          ? _value._stanceSupport
           : stanceSupport // ignore: cast_nullable_to_non_nullable
               as List<int>,
       sensitivity: sensitivity == freezed
-          ? _value.sensitivity
+          ? _value._sensitivity
           : sensitivity // ignore: cast_nullable_to_non_nullable
               as List<int>,
       bpm: bpm == freezed
@@ -329,7 +329,7 @@ class __$UserModeSettingsV2CopyWithImpl<$Res>
           : bpm // ignore: cast_nullable_to_non_nullable
               as double?,
       targetHipDegree: targetHipDegree == freezed
-          ? _value.targetHipDegree
+          ? _value._targetHipDegree
           : targetHipDegree // ignore: cast_nullable_to_non_nullable
               as List<int>,
       weightBearing: weightBearing == freezed
@@ -491,7 +491,7 @@ class _$_UserModeSettingsV2 implements _UserModeSettingsV2 {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _UserModeSettingsV2 &&
+            other is _$_UserModeSettingsV2 &&
             const DeepCollectionEquality().equals(
                 other.leftHipExtensionTorqueLevel,
                 leftHipExtensionTorqueLevel) &&
@@ -516,22 +516,22 @@ class _$_UserModeSettingsV2 implements _UserModeSettingsV2 {
             const DeepCollectionEquality()
                 .equals(other.keepStanding, keepStanding) &&
             const DeepCollectionEquality()
-                .equals(other.leftTorqueLevel, leftTorqueLevel) &&
+                .equals(other._leftTorqueLevel, _leftTorqueLevel) &&
             const DeepCollectionEquality()
-                .equals(other.rightTorqueLevel, rightTorqueLevel) &&
+                .equals(other._rightTorqueLevel, _rightTorqueLevel) &&
             const DeepCollectionEquality()
-                .equals(other.btnControl, btnControl) &&
+                .equals(other._btnControl, _btnControl) &&
             const DeepCollectionEquality()
-                .equals(other.terminalSupport, terminalSupport) &&
+                .equals(other._terminalSupport, _terminalSupport) &&
             const DeepCollectionEquality()
-                .equals(other.supportDuration, supportDuration) &&
+                .equals(other._supportDuration, _supportDuration) &&
             const DeepCollectionEquality()
-                .equals(other.stanceSupport, stanceSupport) &&
+                .equals(other._stanceSupport, _stanceSupport) &&
             const DeepCollectionEquality()
-                .equals(other.sensitivity, sensitivity) &&
+                .equals(other._sensitivity, _sensitivity) &&
             const DeepCollectionEquality().equals(other.bpm, bpm) &&
             const DeepCollectionEquality()
-                .equals(other.targetHipDegree, targetHipDegree) &&
+                .equals(other._targetHipDegree, _targetHipDegree) &&
             const DeepCollectionEquality()
                 .equals(other.weightBearing, weightBearing) &&
             const DeepCollectionEquality()
@@ -550,23 +550,24 @@ class _$_UserModeSettingsV2 implements _UserModeSettingsV2 {
         const DeepCollectionEquality().hash(rightKneeExtensionTorqueLevel),
         const DeepCollectionEquality().hash(rightKneeFlexionTorqueLevel),
         const DeepCollectionEquality().hash(keepStanding),
-        const DeepCollectionEquality().hash(leftTorqueLevel),
-        const DeepCollectionEquality().hash(rightTorqueLevel),
-        const DeepCollectionEquality().hash(btnControl),
-        const DeepCollectionEquality().hash(terminalSupport),
-        const DeepCollectionEquality().hash(supportDuration),
-        const DeepCollectionEquality().hash(stanceSupport),
-        const DeepCollectionEquality().hash(sensitivity),
+        const DeepCollectionEquality().hash(_leftTorqueLevel),
+        const DeepCollectionEquality().hash(_rightTorqueLevel),
+        const DeepCollectionEquality().hash(_btnControl),
+        const DeepCollectionEquality().hash(_terminalSupport),
+        const DeepCollectionEquality().hash(_supportDuration),
+        const DeepCollectionEquality().hash(_stanceSupport),
+        const DeepCollectionEquality().hash(_sensitivity),
         const DeepCollectionEquality().hash(bpm),
-        const DeepCollectionEquality().hash(targetHipDegree),
+        const DeepCollectionEquality().hash(_targetHipDegree),
         const DeepCollectionEquality().hash(weightBearing),
         const DeepCollectionEquality().hash(controlAlgorithm)
       ]);
 
   @JsonKey(ignore: true)
   @override
-  _$UserModeSettingsV2CopyWith<_UserModeSettingsV2> get copyWith =>
-      __$UserModeSettingsV2CopyWithImpl<_UserModeSettingsV2>(this, _$identity);
+  _$$_UserModeSettingsV2CopyWith<_$_UserModeSettingsV2> get copyWith =>
+      __$$_UserModeSettingsV2CopyWithImpl<_$_UserModeSettingsV2>(
+          this, _$identity);
 }
 
 abstract class _UserModeSettingsV2 implements UserModeSettingsV2 {
@@ -641,6 +642,6 @@ abstract class _UserModeSettingsV2 implements UserModeSettingsV2 {
   int? get controlAlgorithm => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
-  _$UserModeSettingsV2CopyWith<_UserModeSettingsV2> get copyWith =>
+  _$$_UserModeSettingsV2CopyWith<_$_UserModeSettingsV2> get copyWith =>
       throw _privateConstructorUsedError;
 }

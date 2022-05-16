@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_grpc_demo_app/src/enums/enum_mode.dart';
 import 'package:flutter_grpc_demo_app/src/model/basic_msg.dart';
 import 'package:flutter_grpc_demo_app/src/model/encoder_raw.dart';
+import 'package:flutter_grpc_demo_app/src/model/joint_state.dart';
 import 'package:flutter_grpc_demo_app/src/model/user_mode_settings.dart';
 import 'package:flutter_grpc_demo_app/src/protos/helloworld.pbgrpc.dart';
 import 'package:flutter_grpc_demo_app/src/protos/m30_backpack_stream.pbgrpc.dart';
@@ -31,6 +32,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:grpc/grpc.dart';
 import 'package:pushable_button/pushable_button.dart';
+import 'package:roslibdart/roslibdart.dart';
 
 class TcpSimpleTestPage extends ConsumerStatefulWidget {
   TcpSimpleTestPage({Key? key, required this.device}) : super(key: key);
@@ -54,6 +56,158 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
   MobileTransceiverClient? _mobileTransceiverClient;
 
   EnumSelectMode _enumMode = EnumSelectMode.unselect;
+  double _sumTotalTime = 0.0;
+  int _sumTotalCount = 0;
+
+  late Ros ros;
+  late Topic chatter;
+  late Topic defaultTopic;
+  late Topic topicJointState;
+
+  Topic? cpuTempTopic;
+  Topic? emrTopic;
+  Topic? backpackTopic;
+  Topic? joystickTopic;
+  String msgReceived = '';
+
+  bool isRosBridgeConnected = false;
+
+  Future<void> subscribeHandler(Map<String, dynamic> msg) async {
+    // print(msg);
+    msgReceived = json.encode(msg);
+    print(msgReceived);
+    // setState(() {});
+  }
+
+  Future<void> subscribeTemperatureHandler(Map<String, dynamic> msg) async {
+    // print(msg);
+    msgReceived = json.encode(msg);
+    print(msgReceived);
+    // setState(() {});
+  }
+
+  int refreshCounter = 0;
+  String _encoderMsg = "";
+
+  Future<void> subscribeEncoderHandler(Map<String, dynamic> msg) async {
+    // print(msg);
+    msgReceived = json.encode(msg);
+    print(msgReceived);
+    final encoderRaw = EncoderRaw.fromJson(msg);
+
+    refreshCounter++;
+    // _encoderMsg += "$msgReceived \n";
+    ref.read(encoderRawProvider.notifier).state = encoderRaw;
+    if (refreshCounter > 60) {
+      // ref.read(encoderRawDataProvider.notifier).state += _encoderMsg;
+      _encoderMsg = "";
+      refreshCounter = 0;
+    }
+    // setState(() {});
+  }
+
+  Future<void> subscribeJointStateHandler(Map<String, dynamic> msg) async {
+    // print(msg);
+    msgReceived = json.encode(msg);
+    print(msgReceived);
+    final jointStateRaw = JointState.fromJson(msg);
+    ref.read(jointStateRawProvider.notifier).state = jointStateRaw;
+    // setState(() {});
+  }
+
+  Future<void> subscribeEmrButtonHandler(Map<String, dynamic> msg) async {
+    // print(msg);
+    msgReceived = json.encode(msg);
+    print(msgReceived);
+  }
+  Future<void> subscribeBackpackButtonHandler(Map<String, dynamic> msg) async {
+    // print(msg);
+    msgReceived = json.encode(msg);
+    print(msgReceived);
+  }
+
+  Future initRosLib() async {
+    if (!isRosBridgeConnected) {
+      ros = Ros(url: 'ws://192.168.15.240:9090');
+      // ros1 = Ros(url: 'ws://192.168.15.240:9090');
+
+      defaultTopic = Topic(
+        ros: ros,
+        name: '/topic',
+        type: "std_msgs/String",
+        reconnectOnClose: true,
+        queueLength: 10,
+        queueSize: 10,
+      );
+
+      chatter = Topic(
+          ros: ros,
+          name: '/topic/debug/encoder/raw',
+          type: "std_msgs/UInt16MultiArray",
+          reconnectOnClose: true,
+          queueLength: 10,
+          queueSize: 10);
+      cpuTempTopic = Topic(
+          ros: ros,
+          name: '/topic/device/temp/cpu',
+          type: "sensor_msgs/Temperature",
+          reconnectOnClose: true,
+          queueLength: 10,
+          queueSize: 10);
+
+      topicJointState = Topic(
+          ros: ros,
+          name: '/topic/debug/joint/state',
+          type: "sensor_msgs/JointState",
+          reconnectOnClose: true,
+          queueLength: 10,
+          queueSize: 10);
+
+      emrTopic = Topic(
+          ros: ros,
+          name: '/topic/button/emr/bool',
+          type: "std_msgs/Bool",
+          reconnectOnClose: true,
+          queueLength: 10,
+          queueSize: 10);
+
+      backpackTopic = Topic(
+          ros: ros,
+          name: '/topic/button/backpack',
+          type: "std_msgs/UInt8MultiArray",
+          reconnectOnClose: true,
+          queueLength: 10,
+          queueSize: 10);
+
+      ros.connect();
+      isRosBridgeConnected = true;
+      // ros1.connect();
+      Timer(const Duration(seconds: 3), () async {
+        await defaultTopic.subscribe(subscribeHandler);
+        await cpuTempTopic?.subscribe(subscribeTemperatureHandler);
+        await chatter.subscribe(subscribeEncoderHandler);
+        await topicJointState.subscribe(subscribeJointStateHandler);
+        await emrTopic?.subscribe(subscribeEmrButtonHandler);
+        await backpackTopic?.subscribe(subscribeBackpackButtonHandler);
+      });
+    }
+
+    // await defaultTopic.subscribe(subscribeHandler);
+    // await chatter.subscribe(subscribeHandler);
+    // await cpuTempTopic?.subscribe(subscribeHandler);
+  }
+
+  void destroyConnection() async {
+    isRosBridgeConnected = false;
+    await cpuTempTopic?.unsubscribe();
+    await defaultTopic.unsubscribe();
+    await chatter.unsubscribe();
+    await topicJointState.unsubscribe();
+    await emrTopic?.unsubscribe();
+    await backpackTopic?.unsubscribe();
+    await ros.close();
+    // ros1.connect();
+  }
 
   @override
   void initState() {
@@ -65,6 +219,7 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
   @override
   void dispose() {
     // TODO: implement dispose
+    destroyConnection();
     doneHandler();
     _streamSubscription?.cancel();
     _streamSubscription = null;
@@ -139,6 +294,7 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
                                               connectSocket();
                                             }
                                           },
+                                          color: Colors.green,
                                           child: const Text(
                                             "소켓연결",
                                             style: TextStyle(
@@ -146,7 +302,6 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
                                               color: Colors.white,
                                             ),
                                           ),
-                                          color: Colors.green,
                                         ),
                                         ClickyButton(
                                           onPressed: () async {
@@ -157,6 +312,7 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
                                               _isSocketConnected = false;
                                             });
                                           },
+                                          color: Colors.red,
                                           child: const Text(
                                             "연결 종료",
                                             style: TextStyle(
@@ -164,7 +320,45 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
                                               color: Colors.white,
                                             ),
                                           ),
+                                        ),
+
+                                        ClickyButton(
+                                          onPressed: () async {
+                                            print("ROS 연결");
+                                            initRosLib();
+                                            // await _clientSocket?.close();
+                                            // _clientSocket?.destroy();
+                                            // setState(() {
+                                            //   _isSocketConnected = false;
+                                            // });
+                                          },
+                                          color: Colors.green,
+                                          child: const Text(
+                                            "ROS 연결",
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                        ClickyButton(
+                                          onPressed: () async {
+                                            print("ROS 연결 종료");
+                                            destroyConnection();
+                                            // await _clientSocket?.close();
+                                            // _clientSocket?.destroy();
+                                            // setState(() {
+                                            //   _isSocketConnected = false;
+                                            // });
+                                          },
                                           color: Colors.red,
+                                          child: const Text(
+                                            "ROS 연결종료",
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              color: Colors.white,
+                                            ),
+                                          ),
                                         ),
                                         // Expanded(
                                         //   child: GestureDetector(
@@ -206,6 +400,7 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
                                               print(e);
                                             }
                                           },
+                                          color: Colors.deepPurple,
                                           child: const Text(
                                             "Hello 전달",
                                             style: TextStyle(
@@ -213,12 +408,12 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
                                               color: Colors.white,
                                             ),
                                           ),
-                                          color: Colors.deepPurple,
                                         ),
                                         ClickyButton(
                                           onPressed: () async {
                                             listenData();
                                           },
+                                          color: Colors.deepPurple,
                                           child: const Text(
                                             "데이터 구독",
                                             style: TextStyle(
@@ -226,12 +421,12 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
                                               color: Colors.white,
                                             ),
                                           ),
-                                          color: Colors.deepPurple,
                                         ),
                                         ClickyButton(
                                           onPressed: () async {
                                             startCommend();
                                           },
+                                          color: Colors.deepPurple,
                                           child: const Text(
                                             "데이터 시작",
                                             style: TextStyle(
@@ -239,12 +434,12 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
                                               color: Colors.white,
                                             ),
                                           ),
-                                          color: Colors.deepPurple,
                                         ),
                                         ClickyButton(
                                           onPressed: () async {
                                             stopListen();
                                           },
+                                          color: Colors.deepPurple,
                                           child: const Text(
                                             "데이터 중단",
                                             style: TextStyle(
@@ -252,7 +447,6 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
                                               color: Colors.white,
                                             ),
                                           ),
-                                          color: Colors.deepPurple,
                                         ),
                                       ],
                                     ),
@@ -293,11 +487,10 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Consumer(builder: (context,ref, _){
+                                  Consumer(builder: (context, ref, _) {
                                     final time = ref.watch(p2pSocketInputTimestampProvider);
                                     final time2 = ref.watch(benchmarkPackAvgTime);
                                     return Text("${time} ms / ${time2} ms");
-
                                   }),
                                   SizedBox(
                                     height: 300,
@@ -436,17 +629,66 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
                                   Divider(),
                                   SizedBox(
                                     height: 200,
-                                    child: Consumer(
-                                      builder: (context, ref, _) {
-                                        final encoderRaw = ref.watch(encoderRawProvider);
-                                        return ListView.builder(
-                                            itemCount: encoderRaw.layout.dim?.length,
-                                            itemBuilder: (context, index) {
-                                              var item = encoderRaw.layout.dim;
-                                              // print(encoderRaw.data?[index]);
-                                              return Text("${item?[index].label} : ${encoderRaw.data?[index]}");
-                                            });
-                                      },
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Consumer(
+                                            builder: (context, ref, _) {
+                                              final encoderRaw = ref.watch(encoderRawProvider);
+                                              return ListView.builder(
+                                                itemCount: encoderRaw.layout.dim?.length,
+                                                itemBuilder: (context, index) {
+                                                  var item = encoderRaw.layout.dim;
+                                                  // print(encoderRaw.data?[index]);
+                                                  return Text("${item?[index].label} : ${encoderRaw.data?[index]}");
+                                                },
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                        Expanded(child: SingleChildScrollView(
+                                          child: Consumer(
+                                            builder: (context, ref, _) {
+                                              final encoderRaw = ref.watch(encoderRawDataProvider);
+                                              return Text(
+                                                encoderRaw,
+                                                style: TextStyle(fontSize: 10),
+                                              );
+                                            },
+                                          ),
+                                        )),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 200,
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Consumer(
+                                            builder: (context, ref, _) {
+                                              final encoderRaw = ref.watch(jointStateRawProvider);
+                                              return ListView.builder(
+                                                itemCount: encoderRaw.name?.length,
+                                                itemBuilder: (context, index) {
+                                                  var nameItem = encoderRaw.name;
+                                                  // print(encoderRaw.data?[index]);
+                                                  return Row(
+                                                    children: [
+                                                      Text(
+                                                          "${encoderRaw.header?.stamp?.sec}: ${encoderRaw.header?.stamp?.nanosec}"),
+                                                      Text("${encoderRaw.name?[index]}: "),
+                                                      Text("| velocity: ${encoderRaw.velocity?[index]} | "),
+                                                      Text("| position: ${encoderRaw.position?[index]} | "),
+                                                      Text("| effort: ${encoderRaw.effort?[index]} "),
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   )
                                 ],
@@ -472,13 +714,13 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
                                     onPressed: () async {
                                       connectDevice();
                                     },
+                                    color: Colors.green,
                                     child: const Text(
                                       "GRPC 연결",
                                       style: TextStyle(
                                         fontSize: 18,
                                       ),
                                     ),
-                                    color: Colors.green,
                                   ),
                                   Wrap(
                                     spacing: 16,
@@ -488,50 +730,50 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
                                         onPressed: () async {
                                           sendPlaySound("/01/001.mp3");
                                         },
+                                        color: Colors.orange,
                                         child: const Text(
                                           "사운드 테스트",
                                           style: TextStyle(
                                             fontSize: 18,
                                           ),
                                         ),
-                                        color: Colors.orange,
                                       ),
                                       ClickyButton(
                                         onPressed: () async {
                                           // sendPlaySound("/01/001.mp3");륨
                                           sendSetVolume();
                                         },
+                                        color: Colors.orange,
                                         child: const Text(
                                           "볼륨 설정",
                                           style: TextStyle(
                                             fontSize: 18,
                                           ),
                                         ),
-                                        color: Colors.orange,
                                       ),
                                       ClickyButton(
                                         onPressed: () async {
                                           sendRhythmControl(RhythmControl.PLAY_START);
                                         },
+                                        color: Colors.cyan,
                                         child: const Text(
                                           "리듬청각자극 시작",
                                           style: TextStyle(
                                             fontSize: 18,
                                           ),
                                         ),
-                                        color: Colors.cyan,
                                       ),
                                       ClickyButton(
                                         onPressed: () async {
                                           sendRhythmControl(RhythmControl.PLAY_STOP);
                                         },
+                                        color: Colors.cyan,
                                         child: const Text(
                                           "리듬청각자극 정지",
                                           style: TextStyle(
                                             fontSize: 18,
                                           ),
                                         ),
-                                        color: Colors.cyan,
                                       ),
                                     ],
                                   ),
@@ -791,13 +1033,13 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
                                                 ),
                                               );
                                             },
+                                            color: Colors.orange,
                                             child: const Text(
                                               "설정 전송",
                                               style: TextStyle(
                                                 fontSize: 18,
                                               ),
                                             ),
-                                            color: Colors.orange,
                                           ),
                                         ],
                                       ),
@@ -987,9 +1229,6 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
     }
   }
 
-  double _sumTotalTime = 0.0;
-  int _sumTotalCount = 0;
-
   void dataHandler(data) {
     var msg = utf8.decode(data);
     // var msg = String.fromCharCodes(data).trim();
@@ -1006,7 +1245,7 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
       // print("[Origin Msg] $i: $element");
       // print(element.length);
       Map<String, dynamic> _decodeMsg = {};
-      if(element.isNotEmpty){
+      if (element.isNotEmpty) {
         try {
           _decodeMsg = jsonDecode(element);
           paddingElement = element;

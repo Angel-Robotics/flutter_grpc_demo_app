@@ -70,22 +70,23 @@ class _$RobotSizeCopyWithImpl<$Res> implements $RobotSizeCopyWith<$Res> {
 }
 
 /// @nodoc
-abstract class _$RobotSizeCopyWith<$Res> implements $RobotSizeCopyWith<$Res> {
-  factory _$RobotSizeCopyWith(
-          _RobotSize value, $Res Function(_RobotSize) then) =
-      __$RobotSizeCopyWithImpl<$Res>;
+abstract class _$$_RobotSizeCopyWith<$Res> implements $RobotSizeCopyWith<$Res> {
+  factory _$$_RobotSizeCopyWith(
+          _$_RobotSize value, $Res Function(_$_RobotSize) then) =
+      __$$_RobotSizeCopyWithImpl<$Res>;
   @override
   $Res call({int? lh, int? lk, int? rh, int? rk});
 }
 
 /// @nodoc
-class __$RobotSizeCopyWithImpl<$Res> extends _$RobotSizeCopyWithImpl<$Res>
-    implements _$RobotSizeCopyWith<$Res> {
-  __$RobotSizeCopyWithImpl(_RobotSize _value, $Res Function(_RobotSize) _then)
-      : super(_value, (v) => _then(v as _RobotSize));
+class __$$_RobotSizeCopyWithImpl<$Res> extends _$RobotSizeCopyWithImpl<$Res>
+    implements _$$_RobotSizeCopyWith<$Res> {
+  __$$_RobotSizeCopyWithImpl(
+      _$_RobotSize _value, $Res Function(_$_RobotSize) _then)
+      : super(_value, (v) => _then(v as _$_RobotSize));
 
   @override
-  _RobotSize get _value => super._value as _RobotSize;
+  _$_RobotSize get _value => super._value as _$_RobotSize;
 
   @override
   $Res call({
@@ -94,7 +95,7 @@ class __$RobotSizeCopyWithImpl<$Res> extends _$RobotSizeCopyWithImpl<$Res>
     Object? rh = freezed,
     Object? rk = freezed,
   }) {
-    return _then(_RobotSize(
+    return _then(_$_RobotSize(
       lh: lh == freezed
           ? _value.lh
           : lh // ignore: cast_nullable_to_non_nullable
@@ -138,7 +139,7 @@ class _$_RobotSize implements _RobotSize {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _RobotSize &&
+            other is _$_RobotSize &&
             const DeepCollectionEquality().equals(other.lh, lh) &&
             const DeepCollectionEquality().equals(other.lk, lk) &&
             const DeepCollectionEquality().equals(other.rh, rh) &&
@@ -155,8 +156,8 @@ class _$_RobotSize implements _RobotSize {
 
   @JsonKey(ignore: true)
   @override
-  _$RobotSizeCopyWith<_RobotSize> get copyWith =>
-      __$RobotSizeCopyWithImpl<_RobotSize>(this, _$identity);
+  _$$_RobotSizeCopyWith<_$_RobotSize> get copyWith =>
+      __$$_RobotSizeCopyWithImpl<_$_RobotSize>(this, _$identity);
 }
 
 abstract class _RobotSize implements RobotSize {
@@ -176,6 +177,6 @@ abstract class _RobotSize implements RobotSize {
   int? get rk => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
-  _$RobotSizeCopyWith<_RobotSize> get copyWith =>
+  _$$_RobotSizeCopyWith<_$_RobotSize> get copyWith =>
       throw _privateConstructorUsedError;
 }
