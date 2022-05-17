@@ -7,12 +7,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_grpc_demo_app/src/enums/enum_mode.dart';
 import 'package:flutter_grpc_demo_app/src/model/emr_msg.dart';
 import 'package:flutter_grpc_demo_app/src/model/encoder_raw.dart';
+import 'package:flutter_grpc_demo_app/src/model/jetson_device_info.dart';
 import 'package:flutter_grpc_demo_app/src/model/joint_state.dart';
 import 'package:flutter_grpc_demo_app/src/model/joy_msg.dart';
 import 'package:flutter_grpc_demo_app/src/model/uint8_array_msg.dart';
 import 'package:flutter_grpc_demo_app/src/protos/mobile_transceiver.pbgrpc.dart';
 import 'package:flutter_grpc_demo_app/src/protos/sound.pbgrpc.dart';
 import 'package:flutter_grpc_demo_app/src/provider/backpack_button_provider.dart';
+import 'package:flutter_grpc_demo_app/src/provider/device_info/jetson_device_info_controller.dart';
 import 'package:flutter_grpc_demo_app/src/provider/emr_button_state_provider.dart';
 import 'package:flutter_grpc_demo_app/src/provider/joystick_state_provider.dart';
 import 'package:flutter_grpc_demo_app/src/provider/wifi_direct_provider.dart';
@@ -20,8 +22,9 @@ import 'package:flutter_p2p_plus/flutter_p2p_plus.dart';
 import 'package:flutter_p2p_plus/protos/protos.pb.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:grpc/grpc.dart';
-import 'package:roslibdart/roslibdart.dart';
+import 'package:roslibdart/roslibdart.dart' as roslib;
 
+// import 'package:roslibdart/roslibdart.dart' ;
 import '../../provider/encoder_raw_controller.dart';
 
 class RosLibDartTestPage extends ConsumerStatefulWidget {
@@ -50,18 +53,22 @@ class _RosLibDartTestPageState extends ConsumerState<RosLibDartTestPage> {
   SoundClient? soundStub;
   MobileTransceiverClient? _mobileTransceiverClient;
 
-  late Ros ros;
-  late Topic chatter;
-  late Topic defaultTopic;
-  late Topic topicJointState;
+  late roslib.Ros ros;
+  late roslib.Topic chatter;
+  late roslib.Topic defaultTopic;
+  late roslib.Topic topicJointState;
 
-  Topic? cpuTempTopic;
-  Topic? emrTopic;
-  Topic? backpackTopic;
-  Topic? joystickTopic;
+  roslib.Topic? cpuTempTopic;
+  roslib.Topic? emrTopic;
+  roslib.Topic? backpackTopic;
+  roslib.Topic? joystickTopic;
   String msgReceived = '';
 
   bool isRosBridgeConnected = false;
+  int refreshCounter = 0;
+  String _encoderMsg = "";
+
+  roslib.Service? jetsonDeviceInfoService;
 
   Future<void> subscribeHandler(Map<String, dynamic> msg) async {
     // print(msg);
@@ -76,9 +83,6 @@ class _RosLibDartTestPageState extends ConsumerState<RosLibDartTestPage> {
     // print(msgReceived);
     // setState(() {});
   }
-
-  int refreshCounter = 0;
-  String _encoderMsg = "";
 
   Future<void> subscribeEncoderHandler(Map<String, dynamic> msg) async {
     // print(msg);
@@ -136,10 +140,10 @@ class _RosLibDartTestPageState extends ConsumerState<RosLibDartTestPage> {
 
   Future initRosLib() async {
     if (!isRosBridgeConnected) {
-      ros = Ros(url: 'ws://192.168.15.240:9090');
+      ros = roslib.Ros(url: 'ws://192.168.15.240:9090');
       // ros1 = Ros(url: 'ws://192.168.15.240:9090');
 
-      defaultTopic = Topic(
+      defaultTopic = roslib.Topic(
         ros: ros,
         name: '/topic',
         type: "std_msgs/String",
@@ -148,14 +152,14 @@ class _RosLibDartTestPageState extends ConsumerState<RosLibDartTestPage> {
         queueSize: 10,
       );
 
-      chatter = Topic(
+      chatter = roslib.Topic(
           ros: ros,
           name: '/topic/debug/encoder/raw',
           type: "std_msgs/UInt16MultiArray",
           reconnectOnClose: true,
           queueLength: 10,
           queueSize: 10);
-      cpuTempTopic = Topic(
+      cpuTempTopic = roslib.Topic(
           ros: ros,
           name: '/topic/device/temp/cpu',
           type: "sensor_msgs/Temperature",
@@ -163,7 +167,7 @@ class _RosLibDartTestPageState extends ConsumerState<RosLibDartTestPage> {
           queueLength: 10,
           queueSize: 10);
 
-      topicJointState = Topic(
+      topicJointState = roslib.Topic(
           ros: ros,
           name: '/topic/debug/joint/state',
           type: "sensor_msgs/JointState",
@@ -171,7 +175,7 @@ class _RosLibDartTestPageState extends ConsumerState<RosLibDartTestPage> {
           queueLength: 10,
           queueSize: 10);
 
-      emrTopic = Topic(
+      emrTopic = roslib.Topic(
           ros: ros,
           name: '/topic/button/emr/bool',
           type: "std_msgs/Bool",
@@ -179,7 +183,7 @@ class _RosLibDartTestPageState extends ConsumerState<RosLibDartTestPage> {
           queueLength: 10,
           queueSize: 10);
 
-      backpackTopic = Topic(
+      backpackTopic = roslib.Topic(
           ros: ros,
           name: '/topic/button/backpack',
           type: "std_msgs/UInt8MultiArray",
@@ -187,7 +191,7 @@ class _RosLibDartTestPageState extends ConsumerState<RosLibDartTestPage> {
           queueLength: 10,
           queueSize: 10);
 
-      joystickTopic = Topic(
+      joystickTopic = roslib.Topic(
           ros: ros,
           name: '/controller/joystic',
           type: "sensor_msgs/Joy",
@@ -195,18 +199,23 @@ class _RosLibDartTestPageState extends ConsumerState<RosLibDartTestPage> {
           queueLength: 10,
           queueSize: 10);
 
+      jetsonDeviceInfoService =
+          roslib.Service(name: 'my_jetson_info', ros: ros, type: "m30_tutorial_interfaces/AmDeviceInfo");
       ros.connect();
       isRosBridgeConnected = true;
       // ros1.connect();
-      Timer(const Duration(seconds: 2), () async {
-        await defaultTopic.subscribe(subscribeHandler);
-        await cpuTempTopic?.subscribe(subscribeTemperatureHandler);
-        await chatter.subscribe(subscribeEncoderHandler);
-        await topicJointState.subscribe(subscribeJointStateHandler);
-        await emrTopic?.subscribe(subscribeEmrButtonHandler);
-        await backpackTopic?.subscribe(subscribeBackpackButtonHandler);
-        await joystickTopic?.subscribe(subscribeJoystickHandler);
-      });
+      Timer(
+        const Duration(seconds: 2),
+        () async {
+          await defaultTopic.subscribe(subscribeHandler);
+          await cpuTempTopic?.subscribe(subscribeTemperatureHandler);
+          await chatter.subscribe(subscribeEncoderHandler);
+          await topicJointState.subscribe(subscribeJointStateHandler);
+          await emrTopic?.subscribe(subscribeEmrButtonHandler);
+          await backpackTopic?.subscribe(subscribeBackpackButtonHandler);
+          await joystickTopic?.subscribe(subscribeJoystickHandler);
+        },
+      );
     }
 
     // await defaultTopic.subscribe(subscribeHandler);
@@ -238,6 +247,7 @@ class _RosLibDartTestPageState extends ConsumerState<RosLibDartTestPage> {
   void dispose() {
     // TODO: implement dispose
     destroyConnection();
+    jetsonDeviceInfoService = null;
     super.dispose();
   }
 
@@ -298,8 +308,12 @@ class _RosLibDartTestPageState extends ConsumerState<RosLibDartTestPage> {
   Future<List<int>> readCert() async {
     final cert = await rootBundle.load('assets/server.crt');
 
-    final certAsList =
-        cert.buffer.asUint8List(cert.offsetInBytes, cert.lengthInBytes).map((uint8) => uint8.toInt()).toList();
+    final certAsList = cert.buffer
+        .asUint8List(cert.offsetInBytes, cert.lengthInBytes)
+        .map(
+          (uint8) => uint8.toInt(),
+        )
+        .toList();
     print(certAsList);
     return certAsList;
   }
@@ -407,6 +421,7 @@ class _RosLibDartTestPageState extends ConsumerState<RosLibDartTestPage> {
                                   child: InkWell(
                                     onTap: () async {
                                       destroyConnection();
+                                      debugPrint("Disconnect ROS");
                                     },
                                     child: Card(
                                       elevation: 4,
@@ -431,6 +446,61 @@ class _RosLibDartTestPageState extends ConsumerState<RosLibDartTestPage> {
                           children: [
                             Text("AM, CM, MD 모듈별 시리얼 및 정보"),
                             Text("모듈별 소프트웨어 버전정보"),
+                            Row(
+                              children: [
+                                Expanded(child: Consumer(builder: (context, ref, _) {
+                                  final amDeviceInfo = ref.watch(jetsonDeviceInfoProvider);
+                                  return Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(),
+                                    ),
+                                    padding: EdgeInsets.all(16),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        ElevatedButton(
+                                          onPressed: () async {
+                                            Map<String, dynamic> json = {"key": "summary"};
+                                            try {
+                                              Map<String, dynamic> _result = await jetsonDeviceInfoService?.call(json);
+                                              print(_result['value']);
+                                              try {
+                                                var deviceInfo = JetsonDeviceInfo.fromJson(jsonDecode(_result['value']));
+                                                ref.read(jetsonDeviceInfoProvider.notifier).state = deviceInfo;
+                                                print(deviceInfo.jetsonSerialNumber);
+                                              } catch (e, s) {
+                                                print(e.toString());
+                                              }
+                                            } catch (e, s) {
+                                              print(e.toString());
+                                            }
+                                          },
+                                          child: Text("AM 정보확인"),
+                                        ),
+                                        SizedBox(height: 16,),
+                                        Text("jetson_serial_number: ${amDeviceInfo?.jetsonSerialNumber ?? ""}"),
+                                        Text("jetson_board: ${amDeviceInfo?.jetsonBoard ?? ""}"),
+                                        Text("jetson_codename: ${amDeviceInfo?.jetsonCodename ?? ""}"),
+                                        Text("jetson_cuda: ${amDeviceInfo?.jetsonCuda ?? ""}"),
+                                        Text("jetson_cudnn: ${amDeviceInfo?.jetsonCudnn ?? ""}"),
+                                        Text("jetson_l4t: ${amDeviceInfo?.jetsonL4t ?? ""}"),
+                                        Text("jetson_l4t_release: ${amDeviceInfo?.jetsonL4tRelease ?? ""}"),
+                                        Text("jetson_l4t_revision: ${amDeviceInfo?.jetsonL4tRevision ?? ""}"),
+                                        Text("jetson_machine: ${amDeviceInfo?.jetsonMachine ?? ""}"),
+                                        Text("jetson_opencv: ${amDeviceInfo?.jetsonOpencv ?? ""}"),
+                                        Text("jetson_soc: ${amDeviceInfo?.jetsonSoc ?? ""}"),
+                                        Text("jetson_tensorrt: ${amDeviceInfo?.jetsonTensorrt ?? ""}"),
+                                        Text("jetson_type: ${amDeviceInfo?.jetsonType ?? ""}"),
+                                        Text("jetson_vpi: ${amDeviceInfo?.jetsonVpi ?? ""}"),
+                                        Text("jetson_vulkan_info: ${amDeviceInfo?.jetsonVulkanInfo ?? ""}"),
+                                      ],
+                                    ),
+                                  );
+                                })),
+                                Expanded(child: Container()),
+                                Expanded(child: Container()),
+                              ],
+                            )
                           ],
                         ),
                         Column(
