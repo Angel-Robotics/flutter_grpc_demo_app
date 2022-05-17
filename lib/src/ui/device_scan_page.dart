@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_grpc_demo_app/src/provider/wifi_direct_provider.dart';
 import 'package:flutter_grpc_demo_app/src/services/permission_api.dart';
 import 'package:flutter_grpc_demo_app/src/ui/device_connection_page.dart';
+import 'package:flutter_grpc_demo_app/src/ui/program_select_page.dart';
 import 'package:flutter_p2p_plus/flutter_p2p_plus.dart';
 import 'package:flutter_p2p_plus/protos/protos.pb.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,9 +23,6 @@ class DeviceScanPage extends ConsumerStatefulWidget {
 }
 
 class _DemoHomePageState extends ConsumerState<DeviceScanPage> with WidgetsBindingObserver {
-
-
-
   @override
   void initState() {
     // TODO: implement initState
@@ -48,7 +46,7 @@ class _DemoHomePageState extends ConsumerState<DeviceScanPage> with WidgetsBindi
                     //   device: wifiP2pDevice,
                     //   // device:  WifiP2pDevice()?? ,
                     // ),
-                    builder: (context) => TcpSimpleTestPage(
+                    builder: (context) => ProgramHomePage(
                       device: wifiP2pDevice,
                     ),
                   ),
@@ -101,7 +99,7 @@ class _DemoHomePageState extends ConsumerState<DeviceScanPage> with WidgetsBindi
                         .map(
                           (e) => GestureDetector(
                             onTap: () async {
-                              if (!e.deviceName.contains("javier") ) {
+                              if (!e.deviceName.contains("javier")) {
                                 return;
                               }
                               showDialog(
@@ -125,10 +123,12 @@ class _DemoHomePageState extends ConsumerState<DeviceScanPage> with WidgetsBindi
                                           Navigator.of(context).pop();
                                           await Navigator.of(context).push(
                                             MaterialPageRoute(
-
-                                              builder: (context) => TcpSimpleTestPage(
+                                              builder: (context) => ProgramHomePage(
                                                 device: _wifiP2pDevice,
                                               ),
+                                              // builder: (context) => TcpSimpleTestPage(
+                                              //   device: _wifiP2pDevice,
+                                              // ),
                                               // builder: (context) => DeviceConnectionPage(
                                               //   device: _wifiP2pDevice,
                                               // ),

@@ -23,8 +23,9 @@ Map<String, dynamic> _$$_EncoderRawToJson(_$_EncoderRaw instance) =>
 _$_MsgDimensionBlock _$$_MsgDimensionBlockFromJson(Map<String, dynamic> json) =>
     _$_MsgDimensionBlock(
       (json['dim'] as List<dynamic>?)
-          ?.map((e) => MsgDimension.fromJson(e as Map<String, dynamic>))
-          .toList(),
+              ?.map((e) => MsgDimension.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
     );
 
 Map<String, dynamic> _$$_MsgDimensionBlockToJson(

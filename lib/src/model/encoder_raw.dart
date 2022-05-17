@@ -17,7 +17,7 @@ class EncoderRaw with _$EncoderRaw {
 @freezed
 class MsgDimensionBlock with _$MsgDimensionBlock {
   factory MsgDimensionBlock(
-    @JsonKey(name: "dim") List<MsgDimension>? dim,
+    @JsonKey(name: "dim", defaultValue: []) List<MsgDimension>? dim,
   ) = _MsgDimensionBlock;
 
   factory MsgDimensionBlock.fromJson(Map<String, dynamic> json) => _$MsgDimensionBlockFromJson(json);

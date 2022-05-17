@@ -77,10 +77,11 @@ class _$EncoderRawCopyWithImpl<$Res> implements $EncoderRawCopyWith<$Res> {
 }
 
 /// @nodoc
-abstract class _$EncoderRawCopyWith<$Res> implements $EncoderRawCopyWith<$Res> {
-  factory _$EncoderRawCopyWith(
-          _EncoderRaw value, $Res Function(_EncoderRaw) then) =
-      __$EncoderRawCopyWithImpl<$Res>;
+abstract class _$$_EncoderRawCopyWith<$Res>
+    implements $EncoderRawCopyWith<$Res> {
+  factory _$$_EncoderRawCopyWith(
+          _$_EncoderRaw value, $Res Function(_$_EncoderRaw) then) =
+      __$$_EncoderRawCopyWithImpl<$Res>;
   @override
   $Res call(
       {@JsonKey(name: "layout") MsgDimensionBlock layout,
@@ -91,27 +92,27 @@ abstract class _$EncoderRawCopyWith<$Res> implements $EncoderRawCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$EncoderRawCopyWithImpl<$Res> extends _$EncoderRawCopyWithImpl<$Res>
-    implements _$EncoderRawCopyWith<$Res> {
-  __$EncoderRawCopyWithImpl(
-      _EncoderRaw _value, $Res Function(_EncoderRaw) _then)
-      : super(_value, (v) => _then(v as _EncoderRaw));
+class __$$_EncoderRawCopyWithImpl<$Res> extends _$EncoderRawCopyWithImpl<$Res>
+    implements _$$_EncoderRawCopyWith<$Res> {
+  __$$_EncoderRawCopyWithImpl(
+      _$_EncoderRaw _value, $Res Function(_$_EncoderRaw) _then)
+      : super(_value, (v) => _then(v as _$_EncoderRaw));
 
   @override
-  _EncoderRaw get _value => super._value as _EncoderRaw;
+  _$_EncoderRaw get _value => super._value as _$_EncoderRaw;
 
   @override
   $Res call({
     Object? layout = freezed,
     Object? data = freezed,
   }) {
-    return _then(_EncoderRaw(
+    return _then(_$_EncoderRaw(
       layout: layout == freezed
           ? _value.layout
           : layout // ignore: cast_nullable_to_non_nullable
               as MsgDimensionBlock,
       data: data == freezed
-          ? _value.data
+          ? _value._data
           : data // ignore: cast_nullable_to_non_nullable
               as List<int>?,
     ));
@@ -132,7 +133,6 @@ class _$_EncoderRaw implements _EncoderRaw {
   @override
   @JsonKey(name: "layout")
   final MsgDimensionBlock layout;
-  @JsonKey(name: "data")
   final List<int>? _data;
   @override
   @JsonKey(name: "data")
@@ -152,9 +152,9 @@ class _$_EncoderRaw implements _EncoderRaw {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _EncoderRaw &&
+            other is _$_EncoderRaw &&
             const DeepCollectionEquality().equals(other.layout, layout) &&
-            const DeepCollectionEquality().equals(other.data, data));
+            const DeepCollectionEquality().equals(other._data, _data));
   }
 
   @JsonKey(ignore: true)
@@ -162,12 +162,12 @@ class _$_EncoderRaw implements _EncoderRaw {
   int get hashCode => Object.hash(
       runtimeType,
       const DeepCollectionEquality().hash(layout),
-      const DeepCollectionEquality().hash(data));
+      const DeepCollectionEquality().hash(_data));
 
   @JsonKey(ignore: true)
   @override
-  _$EncoderRawCopyWith<_EncoderRaw> get copyWith =>
-      __$EncoderRawCopyWithImpl<_EncoderRaw>(this, _$identity);
+  _$$_EncoderRawCopyWith<_$_EncoderRaw> get copyWith =>
+      __$$_EncoderRawCopyWithImpl<_$_EncoderRaw>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -191,7 +191,7 @@ abstract class _EncoderRaw implements EncoderRaw {
   List<int>? get data => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
-  _$EncoderRawCopyWith<_EncoderRaw> get copyWith =>
+  _$$_EncoderRawCopyWith<_$_EncoderRaw> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -201,7 +201,7 @@ MsgDimensionBlock _$MsgDimensionBlockFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$MsgDimensionBlock {
-  @JsonKey(name: "dim")
+  @JsonKey(name: "dim", defaultValue: [])
   List<MsgDimension>? get dim => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -215,7 +215,7 @@ abstract class $MsgDimensionBlockCopyWith<$Res> {
   factory $MsgDimensionBlockCopyWith(
           MsgDimensionBlock value, $Res Function(MsgDimensionBlock) then) =
       _$MsgDimensionBlockCopyWithImpl<$Res>;
-  $Res call({@JsonKey(name: "dim") List<MsgDimension>? dim});
+  $Res call({@JsonKey(name: "dim", defaultValue: []) List<MsgDimension>? dim});
 }
 
 /// @nodoc
@@ -241,33 +241,33 @@ class _$MsgDimensionBlockCopyWithImpl<$Res>
 }
 
 /// @nodoc
-abstract class _$MsgDimensionBlockCopyWith<$Res>
+abstract class _$$_MsgDimensionBlockCopyWith<$Res>
     implements $MsgDimensionBlockCopyWith<$Res> {
-  factory _$MsgDimensionBlockCopyWith(
-          _MsgDimensionBlock value, $Res Function(_MsgDimensionBlock) then) =
-      __$MsgDimensionBlockCopyWithImpl<$Res>;
+  factory _$$_MsgDimensionBlockCopyWith(_$_MsgDimensionBlock value,
+          $Res Function(_$_MsgDimensionBlock) then) =
+      __$$_MsgDimensionBlockCopyWithImpl<$Res>;
   @override
-  $Res call({@JsonKey(name: "dim") List<MsgDimension>? dim});
+  $Res call({@JsonKey(name: "dim", defaultValue: []) List<MsgDimension>? dim});
 }
 
 /// @nodoc
-class __$MsgDimensionBlockCopyWithImpl<$Res>
+class __$$_MsgDimensionBlockCopyWithImpl<$Res>
     extends _$MsgDimensionBlockCopyWithImpl<$Res>
-    implements _$MsgDimensionBlockCopyWith<$Res> {
-  __$MsgDimensionBlockCopyWithImpl(
-      _MsgDimensionBlock _value, $Res Function(_MsgDimensionBlock) _then)
-      : super(_value, (v) => _then(v as _MsgDimensionBlock));
+    implements _$$_MsgDimensionBlockCopyWith<$Res> {
+  __$$_MsgDimensionBlockCopyWithImpl(
+      _$_MsgDimensionBlock _value, $Res Function(_$_MsgDimensionBlock) _then)
+      : super(_value, (v) => _then(v as _$_MsgDimensionBlock));
 
   @override
-  _MsgDimensionBlock get _value => super._value as _MsgDimensionBlock;
+  _$_MsgDimensionBlock get _value => super._value as _$_MsgDimensionBlock;
 
   @override
   $Res call({
     Object? dim = freezed,
   }) {
-    return _then(_MsgDimensionBlock(
+    return _then(_$_MsgDimensionBlock(
       dim == freezed
-          ? _value.dim
+          ? _value._dim
           : dim // ignore: cast_nullable_to_non_nullable
               as List<MsgDimension>?,
     ));
@@ -277,16 +277,16 @@ class __$MsgDimensionBlockCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$_MsgDimensionBlock implements _MsgDimensionBlock {
-  _$_MsgDimensionBlock(@JsonKey(name: "dim") final List<MsgDimension>? dim)
+  _$_MsgDimensionBlock(
+      @JsonKey(name: "dim", defaultValue: []) final List<MsgDimension>? dim)
       : _dim = dim;
 
   factory _$_MsgDimensionBlock.fromJson(Map<String, dynamic> json) =>
       _$$_MsgDimensionBlockFromJson(json);
 
-  @JsonKey(name: "dim")
   final List<MsgDimension>? _dim;
   @override
-  @JsonKey(name: "dim")
+  @JsonKey(name: "dim", defaultValue: [])
   List<MsgDimension>? get dim {
     final value = _dim;
     if (value == null) return null;
@@ -303,19 +303,20 @@ class _$_MsgDimensionBlock implements _MsgDimensionBlock {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _MsgDimensionBlock &&
-            const DeepCollectionEquality().equals(other.dim, dim));
+            other is _$_MsgDimensionBlock &&
+            const DeepCollectionEquality().equals(other._dim, _dim));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, const DeepCollectionEquality().hash(dim));
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_dim));
 
   @JsonKey(ignore: true)
   @override
-  _$MsgDimensionBlockCopyWith<_MsgDimensionBlock> get copyWith =>
-      __$MsgDimensionBlockCopyWithImpl<_MsgDimensionBlock>(this, _$identity);
+  _$$_MsgDimensionBlockCopyWith<_$_MsgDimensionBlock> get copyWith =>
+      __$$_MsgDimensionBlockCopyWithImpl<_$_MsgDimensionBlock>(
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -325,18 +326,18 @@ class _$_MsgDimensionBlock implements _MsgDimensionBlock {
 
 abstract class _MsgDimensionBlock implements MsgDimensionBlock {
   factory _MsgDimensionBlock(
-          @JsonKey(name: "dim") final List<MsgDimension>? dim) =
-      _$_MsgDimensionBlock;
+      @JsonKey(name: "dim", defaultValue: [])
+          final List<MsgDimension>? dim) = _$_MsgDimensionBlock;
 
   factory _MsgDimensionBlock.fromJson(Map<String, dynamic> json) =
       _$_MsgDimensionBlock.fromJson;
 
   @override
-  @JsonKey(name: "dim")
+  @JsonKey(name: "dim", defaultValue: [])
   List<MsgDimension>? get dim => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
-  _$MsgDimensionBlockCopyWith<_MsgDimensionBlock> get copyWith =>
+  _$$_MsgDimensionBlockCopyWith<_$_MsgDimensionBlock> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -396,24 +397,25 @@ class _$MsgDimensionCopyWithImpl<$Res> implements $MsgDimensionCopyWith<$Res> {
 }
 
 /// @nodoc
-abstract class _$MsgDimensionCopyWith<$Res>
+abstract class _$$_MsgDimensionCopyWith<$Res>
     implements $MsgDimensionCopyWith<$Res> {
-  factory _$MsgDimensionCopyWith(
-          _MsgDimension value, $Res Function(_MsgDimension) then) =
-      __$MsgDimensionCopyWithImpl<$Res>;
+  factory _$$_MsgDimensionCopyWith(
+          _$_MsgDimension value, $Res Function(_$_MsgDimension) then) =
+      __$$_MsgDimensionCopyWithImpl<$Res>;
   @override
   $Res call({String? label, int? size, int? stride});
 }
 
 /// @nodoc
-class __$MsgDimensionCopyWithImpl<$Res> extends _$MsgDimensionCopyWithImpl<$Res>
-    implements _$MsgDimensionCopyWith<$Res> {
-  __$MsgDimensionCopyWithImpl(
-      _MsgDimension _value, $Res Function(_MsgDimension) _then)
-      : super(_value, (v) => _then(v as _MsgDimension));
+class __$$_MsgDimensionCopyWithImpl<$Res>
+    extends _$MsgDimensionCopyWithImpl<$Res>
+    implements _$$_MsgDimensionCopyWith<$Res> {
+  __$$_MsgDimensionCopyWithImpl(
+      _$_MsgDimension _value, $Res Function(_$_MsgDimension) _then)
+      : super(_value, (v) => _then(v as _$_MsgDimension));
 
   @override
-  _MsgDimension get _value => super._value as _MsgDimension;
+  _$_MsgDimension get _value => super._value as _$_MsgDimension;
 
   @override
   $Res call({
@@ -421,7 +423,7 @@ class __$MsgDimensionCopyWithImpl<$Res> extends _$MsgDimensionCopyWithImpl<$Res>
     Object? size = freezed,
     Object? stride = freezed,
   }) {
-    return _then(_MsgDimension(
+    return _then(_$_MsgDimension(
       label == freezed
           ? _value.label
           : label // ignore: cast_nullable_to_non_nullable
@@ -462,7 +464,7 @@ class _$_MsgDimension implements _MsgDimension {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _MsgDimension &&
+            other is _$_MsgDimension &&
             const DeepCollectionEquality().equals(other.label, label) &&
             const DeepCollectionEquality().equals(other.size, size) &&
             const DeepCollectionEquality().equals(other.stride, stride));
@@ -478,8 +480,8 @@ class _$_MsgDimension implements _MsgDimension {
 
   @JsonKey(ignore: true)
   @override
-  _$MsgDimensionCopyWith<_MsgDimension> get copyWith =>
-      __$MsgDimensionCopyWithImpl<_MsgDimension>(this, _$identity);
+  _$$_MsgDimensionCopyWith<_$_MsgDimension> get copyWith =>
+      __$$_MsgDimensionCopyWithImpl<_$_MsgDimension>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -503,6 +505,6 @@ abstract class _MsgDimension implements MsgDimension {
   int? get stride => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
-  _$MsgDimensionCopyWith<_MsgDimension> get copyWith =>
+  _$$_MsgDimensionCopyWith<_$_MsgDimension> get copyWith =>
       throw _privateConstructorUsedError;
 }

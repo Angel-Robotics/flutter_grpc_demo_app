@@ -7,8 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_grpc_demo_app/src/enums/enum_mode.dart';
 import 'package:flutter_grpc_demo_app/src/model/basic_msg.dart';
+import 'package:flutter_grpc_demo_app/src/model/emr_msg.dart';
 import 'package:flutter_grpc_demo_app/src/model/encoder_raw.dart';
 import 'package:flutter_grpc_demo_app/src/model/joint_state.dart';
+import 'package:flutter_grpc_demo_app/src/model/joy_msg.dart';
+import 'package:flutter_grpc_demo_app/src/model/uint8_array_msg.dart';
 import 'package:flutter_grpc_demo_app/src/model/user_mode_settings.dart';
 import 'package:flutter_grpc_demo_app/src/protos/helloworld.pbgrpc.dart';
 import 'package:flutter_grpc_demo_app/src/protos/m30_backpack_stream.pbgrpc.dart';
@@ -35,7 +38,10 @@ import 'package:pushable_button/pushable_button.dart';
 import 'package:roslibdart/roslibdart.dart';
 
 class TcpSimpleTestPage extends ConsumerStatefulWidget {
-  TcpSimpleTestPage({Key? key, required this.device}) : super(key: key);
+  TcpSimpleTestPage({
+    Key? key,
+    required this.device,
+  }) : super(key: key);
   WifiP2pDevice device;
 
   @override
@@ -74,15 +80,15 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
 
   Future<void> subscribeHandler(Map<String, dynamic> msg) async {
     // print(msg);
-    msgReceived = json.encode(msg);
-    print(msgReceived);
+    // msgReceived = json.encode(msg);
+    // print(msgReceived);
     // setState(() {});
   }
 
   Future<void> subscribeTemperatureHandler(Map<String, dynamic> msg) async {
     // print(msg);
-    msgReceived = json.encode(msg);
-    print(msgReceived);
+    // msgReceived = json.encode(msg);
+    // print(msgReceived);
     // setState(() {});
   }
 
@@ -91,8 +97,8 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
 
   Future<void> subscribeEncoderHandler(Map<String, dynamic> msg) async {
     // print(msg);
-    msgReceived = json.encode(msg);
-    print(msgReceived);
+    // msgReceived = json.encode(msg);
+    // print(msgReceived);
     final encoderRaw = EncoderRaw.fromJson(msg);
 
     refreshCounter++;
@@ -108,8 +114,8 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
 
   Future<void> subscribeJointStateHandler(Map<String, dynamic> msg) async {
     // print(msg);
-    msgReceived = json.encode(msg);
-    print(msgReceived);
+    // msgReceived = json.encode(msg);
+    // print(msgReceived);
     final jointStateRaw = JointState.fromJson(msg);
     ref.read(jointStateRawProvider.notifier).state = jointStateRaw;
     // setState(() {});
@@ -117,13 +123,30 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
 
   Future<void> subscribeEmrButtonHandler(Map<String, dynamic> msg) async {
     // print(msg);
-    msgReceived = json.encode(msg);
-    print(msgReceived);
+    // msgReceived = json.encode(msg);
+    // print(msgReceived);
+    final boolMsg = BoolMsg.fromJson(msg);
+    ref.read(emrButtonStateProvider.notifier).state = boolMsg.data ?? false;
   }
+
   Future<void> subscribeBackpackButtonHandler(Map<String, dynamic> msg) async {
     // print(msg);
     msgReceived = json.encode(msg);
     print(msgReceived);
+    var rcvData = Uint8ArrayMsg.fromJson(msg);
+    var filterList = rcvData.data?.map((e) => e == 1 ? true : false).toList();
+    debugPrint(filterList.toString());
+    ref.watch(backpackButtonProvider.notifier).state = filterList ?? [];
+  }
+
+  Future<void> subscribeJoystickHandler(Map<String, dynamic> msg) async {
+    // print(msg);
+    msgReceived = json.encode(msg);
+    print(msgReceived);
+    var joyMsg = JoyMsg.fromJson(msg);
+    var _filterList = joyMsg.buttons?.map((e) => e == 0 ? true : false).toList();
+    ref.read(joyButtonStateBoolProvider.notifier).updateState(_filterList ?? []);
+    ref.read(joyAxisStateProvider.notifier).updateState(joyMsg.axes ?? []);
   }
 
   Future initRosLib() async {
@@ -179,16 +202,25 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
           queueLength: 10,
           queueSize: 10);
 
+      joystickTopic = Topic(
+          ros: ros,
+          name: '/controller/joystic',
+          type: "sensor_msgs/Joy",
+          reconnectOnClose: true,
+          queueLength: 10,
+          queueSize: 10);
+
       ros.connect();
       isRosBridgeConnected = true;
       // ros1.connect();
-      Timer(const Duration(seconds: 3), () async {
+      Timer(const Duration(seconds: 2), () async {
         await defaultTopic.subscribe(subscribeHandler);
         await cpuTempTopic?.subscribe(subscribeTemperatureHandler);
         await chatter.subscribe(subscribeEncoderHandler);
         await topicJointState.subscribe(subscribeJointStateHandler);
         await emrTopic?.subscribe(subscribeEmrButtonHandler);
         await backpackTopic?.subscribe(subscribeBackpackButtonHandler);
+        await joystickTopic?.subscribe(subscribeJoystickHandler);
       });
     }
 
@@ -205,6 +237,7 @@ class _TcpSimpleTestPageState extends ConsumerState<TcpSimpleTestPage> {
     await topicJointState.unsubscribe();
     await emrTopic?.unsubscribe();
     await backpackTopic?.unsubscribe();
+    await joystickTopic?.unsubscribe();
     await ros.close();
     // ros1.connect();
   }
