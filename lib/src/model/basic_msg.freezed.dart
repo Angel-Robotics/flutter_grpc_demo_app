@@ -12,34 +12,11 @@ part of 'basic_msg.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more informations: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 BasicMsg _$BasicMsgFromJson(Map<String, dynamic> json) {
   return _BasicMsg.fromJson(json);
 }
-
-/// @nodoc
-class _$BasicMsgTearOff {
-  const _$BasicMsgTearOff();
-
-  _BasicMsg call(
-      {@JsonKey(name: "msg") String? msg,
-      @JsonKey(name: "timestamp") double? timestamp,
-      @JsonKey(name: "msg_len") int? msgLen}) {
-    return _BasicMsg(
-      msg: msg,
-      timestamp: timestamp,
-      msgLen: msgLen,
-    );
-  }
-
-  BasicMsg fromJson(Map<String, Object?> json) {
-    return BasicMsg.fromJson(json);
-  }
-}
-
-/// @nodoc
-const $BasicMsg = _$BasicMsgTearOff();
 
 /// @nodoc
 mixin _$BasicMsg {
@@ -98,9 +75,10 @@ class _$BasicMsgCopyWithImpl<$Res> implements $BasicMsgCopyWith<$Res> {
 }
 
 /// @nodoc
-abstract class _$BasicMsgCopyWith<$Res> implements $BasicMsgCopyWith<$Res> {
-  factory _$BasicMsgCopyWith(_BasicMsg value, $Res Function(_BasicMsg) then) =
-      __$BasicMsgCopyWithImpl<$Res>;
+abstract class _$$_BasicMsgCopyWith<$Res> implements $BasicMsgCopyWith<$Res> {
+  factory _$$_BasicMsgCopyWith(
+          _$_BasicMsg value, $Res Function(_$_BasicMsg) then) =
+      __$$_BasicMsgCopyWithImpl<$Res>;
   @override
   $Res call(
       {@JsonKey(name: "msg") String? msg,
@@ -109,13 +87,14 @@ abstract class _$BasicMsgCopyWith<$Res> implements $BasicMsgCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$BasicMsgCopyWithImpl<$Res> extends _$BasicMsgCopyWithImpl<$Res>
-    implements _$BasicMsgCopyWith<$Res> {
-  __$BasicMsgCopyWithImpl(_BasicMsg _value, $Res Function(_BasicMsg) _then)
-      : super(_value, (v) => _then(v as _BasicMsg));
+class __$$_BasicMsgCopyWithImpl<$Res> extends _$BasicMsgCopyWithImpl<$Res>
+    implements _$$_BasicMsgCopyWith<$Res> {
+  __$$_BasicMsgCopyWithImpl(
+      _$_BasicMsg _value, $Res Function(_$_BasicMsg) _then)
+      : super(_value, (v) => _then(v as _$_BasicMsg));
 
   @override
-  _BasicMsg get _value => super._value as _BasicMsg;
+  _$_BasicMsg get _value => super._value as _$_BasicMsg;
 
   @override
   $Res call({
@@ -123,7 +102,7 @@ class __$BasicMsgCopyWithImpl<$Res> extends _$BasicMsgCopyWithImpl<$Res>
     Object? timestamp = freezed,
     Object? msgLen = freezed,
   }) {
-    return _then(_BasicMsg(
+    return _then(_$_BasicMsg(
       msg: msg == freezed
           ? _value.msg
           : msg // ignore: cast_nullable_to_non_nullable
@@ -170,12 +149,13 @@ class _$_BasicMsg implements _BasicMsg {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _BasicMsg &&
+            other is _$_BasicMsg &&
             const DeepCollectionEquality().equals(other.msg, msg) &&
             const DeepCollectionEquality().equals(other.timestamp, timestamp) &&
             const DeepCollectionEquality().equals(other.msgLen, msgLen));
   }
 
+  @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -185,8 +165,8 @@ class _$_BasicMsg implements _BasicMsg {
 
   @JsonKey(ignore: true)
   @override
-  _$BasicMsgCopyWith<_BasicMsg> get copyWith =>
-      __$BasicMsgCopyWithImpl<_BasicMsg>(this, _$identity);
+  _$$_BasicMsgCopyWith<_$_BasicMsg> get copyWith =>
+      __$$_BasicMsgCopyWithImpl<_$_BasicMsg>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -196,23 +176,23 @@ class _$_BasicMsg implements _BasicMsg {
 
 abstract class _BasicMsg implements BasicMsg {
   factory _BasicMsg(
-      {@JsonKey(name: "msg") String? msg,
-      @JsonKey(name: "timestamp") double? timestamp,
-      @JsonKey(name: "msg_len") int? msgLen}) = _$_BasicMsg;
+      {@JsonKey(name: "msg") final String? msg,
+      @JsonKey(name: "timestamp") final double? timestamp,
+      @JsonKey(name: "msg_len") final int? msgLen}) = _$_BasicMsg;
 
   factory _BasicMsg.fromJson(Map<String, dynamic> json) = _$_BasicMsg.fromJson;
 
   @override
   @JsonKey(name: "msg")
-  String? get msg;
+  String? get msg => throw _privateConstructorUsedError;
   @override
   @JsonKey(name: "timestamp")
-  double? get timestamp;
+  double? get timestamp => throw _privateConstructorUsedError;
   @override
   @JsonKey(name: "msg_len")
-  int? get msgLen;
+  int? get msgLen => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
-  _$BasicMsgCopyWith<_BasicMsg> get copyWith =>
+  _$$_BasicMsgCopyWith<_$_BasicMsg> get copyWith =>
       throw _privateConstructorUsedError;
 }

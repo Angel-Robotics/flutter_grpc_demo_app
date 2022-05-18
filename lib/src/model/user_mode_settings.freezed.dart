@@ -12,58 +12,7 @@ part of 'user_mode_settings.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more informations: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
-
-/// @nodoc
-class _$UserModeSettingsTearOff {
-  const _$UserModeSettingsTearOff();
-
-  _UserModeSettings call(
-      {int? leftHipExtensionTorqueLevel,
-      int? leftHipFlexionTorqueLevel,
-      int? rightHipExtensionTorqueLevel,
-      int? rightHipFlexionTorqueLevel,
-      int? leftKneeExtensionTorqueLevel,
-      int? leftKneeFlexionTorqueLevel,
-      int? rightKneeExtensionTorqueLevel,
-      int? rightKneeFlexionTorqueLevel,
-      bool? keepStanding,
-      int? leftSensitivity,
-      int? rightSensitivity,
-      int? leftDuration,
-      int? rightDuration,
-      int? leftStanceSupport,
-      int? rightStanceSupport,
-      bool? terminalSupport,
-      bool? btnControl,
-      List<int> leftTorqueLevel = const [10, 10, 10, 10],
-      List<int> rightTorqueLevel = const [10, 10, 10, 10]}) {
-    return _UserModeSettings(
-      leftHipExtensionTorqueLevel: leftHipExtensionTorqueLevel,
-      leftHipFlexionTorqueLevel: leftHipFlexionTorqueLevel,
-      rightHipExtensionTorqueLevel: rightHipExtensionTorqueLevel,
-      rightHipFlexionTorqueLevel: rightHipFlexionTorqueLevel,
-      leftKneeExtensionTorqueLevel: leftKneeExtensionTorqueLevel,
-      leftKneeFlexionTorqueLevel: leftKneeFlexionTorqueLevel,
-      rightKneeExtensionTorqueLevel: rightKneeExtensionTorqueLevel,
-      rightKneeFlexionTorqueLevel: rightKneeFlexionTorqueLevel,
-      keepStanding: keepStanding,
-      leftSensitivity: leftSensitivity,
-      rightSensitivity: rightSensitivity,
-      leftDuration: leftDuration,
-      rightDuration: rightDuration,
-      leftStanceSupport: leftStanceSupport,
-      rightStanceSupport: rightStanceSupport,
-      terminalSupport: terminalSupport,
-      btnControl: btnControl,
-      leftTorqueLevel: leftTorqueLevel,
-      rightTorqueLevel: rightTorqueLevel,
-    );
-  }
-}
-
-/// @nodoc
-const $UserModeSettings = _$UserModeSettingsTearOff();
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 /// @nodoc
 mixin _$UserModeSettings {
@@ -232,11 +181,11 @@ class _$UserModeSettingsCopyWithImpl<$Res>
 }
 
 /// @nodoc
-abstract class _$UserModeSettingsCopyWith<$Res>
+abstract class _$$_UserModeSettingsCopyWith<$Res>
     implements $UserModeSettingsCopyWith<$Res> {
-  factory _$UserModeSettingsCopyWith(
-          _UserModeSettings value, $Res Function(_UserModeSettings) then) =
-      __$UserModeSettingsCopyWithImpl<$Res>;
+  factory _$$_UserModeSettingsCopyWith(
+          _$_UserModeSettings value, $Res Function(_$_UserModeSettings) then) =
+      __$$_UserModeSettingsCopyWithImpl<$Res>;
   @override
   $Res call(
       {int? leftHipExtensionTorqueLevel,
@@ -261,15 +210,15 @@ abstract class _$UserModeSettingsCopyWith<$Res>
 }
 
 /// @nodoc
-class __$UserModeSettingsCopyWithImpl<$Res>
+class __$$_UserModeSettingsCopyWithImpl<$Res>
     extends _$UserModeSettingsCopyWithImpl<$Res>
-    implements _$UserModeSettingsCopyWith<$Res> {
-  __$UserModeSettingsCopyWithImpl(
-      _UserModeSettings _value, $Res Function(_UserModeSettings) _then)
-      : super(_value, (v) => _then(v as _UserModeSettings));
+    implements _$$_UserModeSettingsCopyWith<$Res> {
+  __$$_UserModeSettingsCopyWithImpl(
+      _$_UserModeSettings _value, $Res Function(_$_UserModeSettings) _then)
+      : super(_value, (v) => _then(v as _$_UserModeSettings));
 
   @override
-  _UserModeSettings get _value => super._value as _UserModeSettings;
+  _$_UserModeSettings get _value => super._value as _$_UserModeSettings;
 
   @override
   $Res call({
@@ -293,7 +242,7 @@ class __$UserModeSettingsCopyWithImpl<$Res>
     Object? leftTorqueLevel = freezed,
     Object? rightTorqueLevel = freezed,
   }) {
-    return _then(_UserModeSettings(
+    return _then(_$_UserModeSettings(
       leftHipExtensionTorqueLevel: leftHipExtensionTorqueLevel == freezed
           ? _value.leftHipExtensionTorqueLevel
           : leftHipExtensionTorqueLevel // ignore: cast_nullable_to_non_nullable
@@ -363,11 +312,11 @@ class __$UserModeSettingsCopyWithImpl<$Res>
           : btnControl // ignore: cast_nullable_to_non_nullable
               as bool?,
       leftTorqueLevel: leftTorqueLevel == freezed
-          ? _value.leftTorqueLevel
+          ? _value._leftTorqueLevel
           : leftTorqueLevel // ignore: cast_nullable_to_non_nullable
               as List<int>,
       rightTorqueLevel: rightTorqueLevel == freezed
-          ? _value.rightTorqueLevel
+          ? _value._rightTorqueLevel
           : rightTorqueLevel // ignore: cast_nullable_to_non_nullable
               as List<int>,
     ));
@@ -395,8 +344,10 @@ class _$_UserModeSettings implements _UserModeSettings {
       this.rightStanceSupport,
       this.terminalSupport,
       this.btnControl,
-      this.leftTorqueLevel = const [10, 10, 10, 10],
-      this.rightTorqueLevel = const [10, 10, 10, 10]});
+      final List<int> leftTorqueLevel = const [10, 10, 10, 10],
+      final List<int> rightTorqueLevel = const [10, 10, 10, 10]})
+      : _leftTorqueLevel = leftTorqueLevel,
+        _rightTorqueLevel = rightTorqueLevel;
 
   @override
   final int? leftHipExtensionTorqueLevel;
@@ -432,12 +383,21 @@ class _$_UserModeSettings implements _UserModeSettings {
   final bool? terminalSupport;
   @override
   final bool? btnControl;
-  @JsonKey()
+  final List<int> _leftTorqueLevel;
   @override
-  final List<int> leftTorqueLevel;
   @JsonKey()
+  List<int> get leftTorqueLevel {
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_leftTorqueLevel);
+  }
+
+  final List<int> _rightTorqueLevel;
   @override
-  final List<int> rightTorqueLevel;
+  @JsonKey()
+  List<int> get rightTorqueLevel {
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_rightTorqueLevel);
+  }
 
   @override
   String toString() {
@@ -448,7 +408,7 @@ class _$_UserModeSettings implements _UserModeSettings {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _UserModeSettings &&
+            other is _$_UserModeSettings &&
             const DeepCollectionEquality().equals(
                 other.leftHipExtensionTorqueLevel,
                 leftHipExtensionTorqueLevel) &&
@@ -489,9 +449,9 @@ class _$_UserModeSettings implements _UserModeSettings {
             const DeepCollectionEquality()
                 .equals(other.btnControl, btnControl) &&
             const DeepCollectionEquality()
-                .equals(other.leftTorqueLevel, leftTorqueLevel) &&
+                .equals(other._leftTorqueLevel, _leftTorqueLevel) &&
             const DeepCollectionEquality()
-                .equals(other.rightTorqueLevel, rightTorqueLevel));
+                .equals(other._rightTorqueLevel, _rightTorqueLevel));
   }
 
   @override
@@ -514,78 +474,78 @@ class _$_UserModeSettings implements _UserModeSettings {
         const DeepCollectionEquality().hash(rightStanceSupport),
         const DeepCollectionEquality().hash(terminalSupport),
         const DeepCollectionEquality().hash(btnControl),
-        const DeepCollectionEquality().hash(leftTorqueLevel),
-        const DeepCollectionEquality().hash(rightTorqueLevel)
+        const DeepCollectionEquality().hash(_leftTorqueLevel),
+        const DeepCollectionEquality().hash(_rightTorqueLevel)
       ]);
 
   @JsonKey(ignore: true)
   @override
-  _$UserModeSettingsCopyWith<_UserModeSettings> get copyWith =>
-      __$UserModeSettingsCopyWithImpl<_UserModeSettings>(this, _$identity);
+  _$$_UserModeSettingsCopyWith<_$_UserModeSettings> get copyWith =>
+      __$$_UserModeSettingsCopyWithImpl<_$_UserModeSettings>(this, _$identity);
 }
 
 abstract class _UserModeSettings implements UserModeSettings {
   factory _UserModeSettings(
-      {int? leftHipExtensionTorqueLevel,
-      int? leftHipFlexionTorqueLevel,
-      int? rightHipExtensionTorqueLevel,
-      int? rightHipFlexionTorqueLevel,
-      int? leftKneeExtensionTorqueLevel,
-      int? leftKneeFlexionTorqueLevel,
-      int? rightKneeExtensionTorqueLevel,
-      int? rightKneeFlexionTorqueLevel,
-      bool? keepStanding,
-      int? leftSensitivity,
-      int? rightSensitivity,
-      int? leftDuration,
-      int? rightDuration,
-      int? leftStanceSupport,
-      int? rightStanceSupport,
-      bool? terminalSupport,
-      bool? btnControl,
-      List<int> leftTorqueLevel,
-      List<int> rightTorqueLevel}) = _$_UserModeSettings;
+      {final int? leftHipExtensionTorqueLevel,
+      final int? leftHipFlexionTorqueLevel,
+      final int? rightHipExtensionTorqueLevel,
+      final int? rightHipFlexionTorqueLevel,
+      final int? leftKneeExtensionTorqueLevel,
+      final int? leftKneeFlexionTorqueLevel,
+      final int? rightKneeExtensionTorqueLevel,
+      final int? rightKneeFlexionTorqueLevel,
+      final bool? keepStanding,
+      final int? leftSensitivity,
+      final int? rightSensitivity,
+      final int? leftDuration,
+      final int? rightDuration,
+      final int? leftStanceSupport,
+      final int? rightStanceSupport,
+      final bool? terminalSupport,
+      final bool? btnControl,
+      final List<int> leftTorqueLevel,
+      final List<int> rightTorqueLevel}) = _$_UserModeSettings;
 
   @override
-  int? get leftHipExtensionTorqueLevel;
+  int? get leftHipExtensionTorqueLevel => throw _privateConstructorUsedError;
   @override
-  int? get leftHipFlexionTorqueLevel;
+  int? get leftHipFlexionTorqueLevel => throw _privateConstructorUsedError;
   @override
-  int? get rightHipExtensionTorqueLevel;
+  int? get rightHipExtensionTorqueLevel => throw _privateConstructorUsedError;
   @override
-  int? get rightHipFlexionTorqueLevel;
+  int? get rightHipFlexionTorqueLevel => throw _privateConstructorUsedError;
   @override
-  int? get leftKneeExtensionTorqueLevel;
+  int? get leftKneeExtensionTorqueLevel => throw _privateConstructorUsedError;
   @override
-  int? get leftKneeFlexionTorqueLevel;
+  int? get leftKneeFlexionTorqueLevel => throw _privateConstructorUsedError;
   @override
-  int? get rightKneeExtensionTorqueLevel;
+  int? get rightKneeExtensionTorqueLevel => throw _privateConstructorUsedError;
   @override
-  int? get rightKneeFlexionTorqueLevel;
+  int? get rightKneeFlexionTorqueLevel => throw _privateConstructorUsedError;
   @override
-  bool? get keepStanding;
+  bool? get keepStanding => throw _privateConstructorUsedError;
   @override
-  int? get leftSensitivity;
+  int? get leftSensitivity => throw _privateConstructorUsedError;
   @override
-  int? get rightSensitivity;
+  int? get rightSensitivity => throw _privateConstructorUsedError;
   @override
-  int? get leftDuration;
+  int? get leftDuration => throw _privateConstructorUsedError;
   @override
-  int? get rightDuration;
+  int? get rightDuration => throw _privateConstructorUsedError;
   @override
-  int? get leftStanceSupport;
+  int? get leftStanceSupport => throw _privateConstructorUsedError;
   @override
-  int? get rightStanceSupport;
+  int? get rightStanceSupport => throw _privateConstructorUsedError;
   @override
-  bool? get terminalSupport;
+  bool? get terminalSupport => throw _privateConstructorUsedError;
   @override
-  bool? get btnControl;
+  bool? get btnControl => throw _privateConstructorUsedError;
   @override
-  List<int> get leftTorqueLevel;
+  List<int> get leftTorqueLevel => throw _privateConstructorUsedError;
   @override
-  List<int> get rightTorqueLevel;
+  List<int> get rightTorqueLevel => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
-  _$UserModeSettingsCopyWith<_UserModeSettings> get copyWith =>
+  _$$_UserModeSettingsCopyWith<_$_UserModeSettings> get copyWith =>
       throw _privateConstructorUsedError;
 }
