@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_grpc_demo_app/src/ui/roslib/ros_lib_dart_test_page.dart';
+import 'package:flutter_grpc_demo_app/src/ui/roslib/ros_lib_request_test_page.dart';
 import 'package:flutter_grpc_demo_app/src/ui/tcp_socket/tcp_simple_test_page.dart';
 import 'package:flutter_p2p_plus/protos/protos.pb.dart';
 
@@ -48,28 +49,56 @@ class _ProgramSelectPageState extends State<ProgramHomePage> {
                 ),
               ),
             ),
-             Expanded(
+            Expanded(
               child: Padding(
-                padding: EdgeInsets.all(8.0),
-                child: GestureDetector(
-                  onTap: () async{
-                    await Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => RosLibDartTestPage(
-                          device: widget.device,
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () async {
+                          await Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => RosLibDartTestPage(
+                                device: widget.device,
+                              ),
+                            ),
+                          );
+                        },
+                        child: const Card(
+                          elevation: 4,
+                          child: Center(
+                            child: Text("ROS LIB (통합)"),
+                          ),
                         ),
                       ),
-                    );
-                  },
-                  child: Card(
-                    elevation: 4,
-                    child: Center(
-                      child: Text("ROS LIB"),
                     ),
-                  ),
+                    SizedBox(
+                      height: 16,
+                    ),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () async {
+                          await Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => RosLibRequestTestPage(
+                                device: widget.device,
+                              ),
+                            ),
+                          );
+                        },
+                        child: const Card(
+                          elevation: 4,
+                          child: Center(
+                            child: Text("ROS LIB (요청 테스트)"),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),

@@ -24,10 +24,6 @@ import 'package:flutter_grpc_demo_app/src/provider/device_info/tegrastats_provid
 import 'package:flutter_grpc_demo_app/src/provider/emr_button_state_provider.dart';
 import 'package:flutter_grpc_demo_app/src/provider/joystick_state_provider.dart';
 import 'package:flutter_grpc_demo_app/src/provider/wifi_direct_provider.dart';
-import 'package:flutter_grpc_demo_app/src/ui/component/monitoring/encoder_raw_widget.dart';
-import 'package:flutter_grpc_demo_app/src/ui/component/monitoring/jetson_cpu_temp_widget.dart';
-import 'package:flutter_grpc_demo_app/src/ui/component/monitoring/jetson_gpu_temp_widget.dart';
-import 'package:flutter_grpc_demo_app/src/ui/component/monitoring/joint_state_raw_widget.dart';
 import 'package:flutter_grpc_demo_app/src/ui/roslib/data_monitoring_page.dart';
 import 'package:flutter_p2p_plus/flutter_p2p_plus.dart';
 import 'package:flutter_p2p_plus/protos/protos.pb.dart';
@@ -35,7 +31,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:grpc/grpc.dart';
 import 'package:roslibdart/roslibdart.dart' as roslib;
 
-// import 'package:roslibdart/roslibdart.dart' ;
 import '../../provider/encoder_raw_controller.dart';
 
 class RosLibDartTestPage extends ConsumerStatefulWidget {
@@ -205,6 +200,10 @@ class _RosLibDartTestPageState extends ConsumerState<RosLibDartTestPage> {
                             NavigationRailDestination(
                                 icon: Icon(Icons.waterfall_chart),
                                 label: Text("모니터링"),
+                                padding: EdgeInsets.symmetric(vertical: 16)),
+                            NavigationRailDestination(
+                                icon: Icon(Icons.send_time_extension),
+                                label: Text("요청테스트"),
                                 padding: EdgeInsets.symmetric(vertical: 16)),
                           ],
                           selectedIndex: _railIndex),
@@ -605,14 +604,14 @@ class _RosLibDartTestPageState extends ConsumerState<RosLibDartTestPage> {
                                                                 ),
                                                               ],
                                                             ),
-                                                            Text("성별"),
-                                                            Text("캐릭터"),
-                                                            Text("파일선택"),
+                                                            const Text("성별"),
+                                                            const Text("캐릭터"),
+                                                            const Text("파일선택"),
                                                             ButtonBar(
                                                               children: [
                                                                 ElevatedButton(
                                                                   onPressed: () {},
-                                                                  child: Text("재생"),
+                                                                  child: const Text("재생"),
                                                                 )
                                                               ],
                                                             )
@@ -674,6 +673,211 @@ class _RosLibDartTestPageState extends ConsumerState<RosLibDartTestPage> {
                                 ],
                               ),
                               const DataMonitoringPage(),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text("모든 요청 집합 (테스트용)"),
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: SingleChildScrollView(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Container(
+                                                  padding: const EdgeInsets.all(15),
+                                                  decoration: BoxDecoration(border: Border.all()),
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      const Text("Device Info"),
+                                                      const Text("젯슨 모듈 자체의 정보 처리에 사용"),
+                                                      OutlinedButton(
+                                                        onPressed: () {},
+                                                        child: const Text(
+                                                          "젯슨 시스템 정보 요청",
+                                                        ),
+                                                      ),
+                                                      OutlinedButton(
+                                                        onPressed: () {},
+                                                        child: const Text(
+                                                          "MAC Address 정보 요청",
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                Container(
+                                                  padding: const EdgeInsets.all(15),
+                                                  decoration: BoxDecoration(border: Border.all()),
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      const Text("Mobile Bridge Roslib"),
+                                                      const Text("모바일 브릿지 노드 및 서비스 전용"),
+                                                      const Divider(),
+                                                      Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          const Text("로봇 조정을 위해 사용"),
+                                                          OutlinedButton(
+                                                            onPressed: () {},
+                                                            child: const Text(
+                                                              "로봇사이즈 조정 요청 전달",
+                                                            ),
+                                                          ),
+                                                          OutlinedButton(
+                                                            onPressed: () {},
+                                                            child: const Text(
+                                                              "구동기 원점 조정",
+                                                            ),
+                                                          ),
+                                                          OutlinedButton(
+                                                            onPressed: () {},
+                                                            child: const Text(
+                                                              "업라이트 센서 원점 및 초기화",
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      const Divider(),
+                                                      Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          const Text("사운드, 음성, 부저"),
+                                                          OutlinedButton(
+                                                            onPressed: () {},
+                                                            child: const Text(
+                                                              "사운드 폴더 정보",
+                                                            ),
+                                                          ),
+                                                          OutlinedButton(
+                                                            onPressed: () {},
+                                                            child: const Text(
+                                                              "볼륨 조정 요청",
+                                                            ),
+                                                          ),
+                                                          Wrap(
+                                                            children: [
+                                                              OutlinedButton(
+                                                                onPressed: () {},
+                                                                child: const Text(
+                                                                  "사운드 재생 테스트 1",
+                                                                ),
+                                                              ),
+                                                              OutlinedButton(
+                                                                onPressed: () {},
+                                                                child: const Text(
+                                                                  "사운드 재생 테스트 2",
+                                                                ),
+                                                              ),
+                                                              OutlinedButton(
+                                                                onPressed: () {},
+                                                                child: const Text(
+                                                                  "사운드 재생 테스트 3",
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          Wrap(
+                                                            children: [
+                                                              OutlinedButton(
+                                                                onPressed: () {},
+                                                                child: const Text(
+                                                                  "부저 재생 테스트 1",
+                                                                ),
+                                                              ),
+                                                              OutlinedButton(
+                                                                onPressed: () {},
+                                                                child: const Text(
+                                                                  "부저 재생 테스트 2",
+                                                                ),
+                                                              ),
+                                                              OutlinedButton(
+                                                                onPressed: () {},
+                                                                child: const Text(
+                                                                  "부저 재생 테스트 3",
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          )
+                                                        ],
+                                                      ),
+                                                      const Divider(),
+                                                      Column(
+                                                        children: [
+                                                          Text("훈련 관련 테스트"),
+                                                          Wrap(
+                                                            children: [
+                                                              OutlinedButton(
+                                                                onPressed: () {},
+                                                                child: const Text(
+                                                                  "일어서기 모드",
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        const VerticalDivider(
+                                          color: Colors.grey,
+                                        ),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Expanded(
+                                                child: Container(
+                                                  padding: const EdgeInsets.all(15),
+                                                  decoration: BoxDecoration(border: Border.all()),
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: const [
+                                                      Text("Status"),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                child: Container(
+                                                  padding: const EdgeInsets.all(15),
+                                                  decoration: BoxDecoration(border: Border.all()),
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: const [
+                                                      Text("전송"),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                child: Container(
+                                                  padding: const EdgeInsets.all(15),
+                                                  decoration: BoxDecoration(border: Border.all()),
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: const [
+                                                      Text("응답"),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              )
                             ],
                           ),
                         ),
@@ -702,41 +906,28 @@ class _RosLibDartTestPageState extends ConsumerState<RosLibDartTestPage> {
   }
 
   Future<void> subscribeCpuTemperatureHandler(Map<String, dynamic> msg) async {
-    // print(msg);
     final tempMsg = TemperatureMsg.fromJson(msg);
     ref.read(jetsonCpuTemperatureProvider.notifier).state = tempMsg.temperature ?? 0.0;
   }
 
   Future<void> subscribeGpuTemperatureHandler(Map<String, dynamic> msg) async {
-    // print(msg);
     final tempMsg = TemperatureMsg.fromJson(msg);
     ref.read(jetsonGpuTemperatureProvider.notifier).state = tempMsg.temperature ?? 0.0;
   }
 
   Future<void> subscribeEncoderHandler(Map<String, dynamic> msg) async {
-    // print(msg);
-    // msgReceived = json.encode(msg);
-    // print(msgReceived);
     final encoderRaw = EncoderRaw.fromJson(msg);
-
     refreshCounter++;
-    // _encoderMsg += "$msgReceived \n";
     ref.read(encoderRawProvider.notifier).state = encoderRaw;
     if (refreshCounter > 60) {
-      // ref.read(encoderRawDataProvider.notifier).state += _encoderMsg;
       _encoderMsg = "";
       refreshCounter = 0;
     }
-    // setState(() {});
   }
 
   Future<void> subscribeJointStateHandler(Map<String, dynamic> msg) async {
-    // print(msg);
-    // msgReceived = json.encode(msg);
-    // print(msgReceived);
     final jointStateRaw = JointState.fromJson(msg);
     ref.read(jointStateRawProvider.notifier).state = jointStateRaw;
-    // setState(() {});
   }
 
   Future<void> subscribeEmrButtonHandler(Map<String, dynamic> msg) async {
@@ -777,7 +968,6 @@ class _RosLibDartTestPageState extends ConsumerState<RosLibDartTestPage> {
   Future initRosLib() async {
     if (!isRosBridgeConnected) {
       ros = roslib.Ros(url: 'ws://192.168.15.240:9090');
-
       defaultTopic = roslib.Topic(
         ros: ros,
         name: '/topic',
@@ -786,7 +976,6 @@ class _RosLibDartTestPageState extends ConsumerState<RosLibDartTestPage> {
         queueLength: 10,
         queueSize: 10,
       );
-
       chatter = roslib.Topic(
           ros: ros,
           name: '/topic/debug/encoder/raw',
@@ -794,7 +983,6 @@ class _RosLibDartTestPageState extends ConsumerState<RosLibDartTestPage> {
           reconnectOnClose: true,
           queueLength: 10,
           queueSize: 10);
-
       batteryTopic = roslib.Topic(
           ros: ros,
           name: '/topic/battery',
@@ -802,7 +990,6 @@ class _RosLibDartTestPageState extends ConsumerState<RosLibDartTestPage> {
           reconnectOnClose: true,
           queueLength: 10,
           queueSize: 10);
-
       cpuTempTopic = roslib.Topic(
           ros: ros,
           name: '/topic/device/temp/cpu',
@@ -817,7 +1004,6 @@ class _RosLibDartTestPageState extends ConsumerState<RosLibDartTestPage> {
           reconnectOnClose: true,
           queueLength: 10,
           queueSize: 10);
-
       topicJointState = roslib.Topic(
           ros: ros,
           name: '/topic/debug/joint/state',
@@ -837,7 +1023,7 @@ class _RosLibDartTestPageState extends ConsumerState<RosLibDartTestPage> {
       backpackTopic = roslib.Topic(
           ros: ros,
           name: '/topic/button/backpack',
-          type: "std_msgs/UInt8MultiArray",
+          type: "std_msgs/Int8MultiArray",
           reconnectOnClose: true,
           queueLength: 10,
           queueSize: 10);

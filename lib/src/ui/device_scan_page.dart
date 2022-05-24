@@ -99,7 +99,7 @@ class _DemoHomePageState extends ConsumerState<DeviceScanPage> with WidgetsBindi
                         .map(
                           (e) => GestureDetector(
                             onTap: () async {
-                              if (!e.deviceName.contains("javier")) {
+                              if (!e.deviceName.contains("xavier")) {
                                 return;
                               }
                               showDialog(
@@ -109,10 +109,9 @@ class _DemoHomePageState extends ConsumerState<DeviceScanPage> with WidgetsBindi
                                   content: Text("${e.deviceName} (${e.deviceAddress})를 연결할까요?"),
                                   actions: [
                                     TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: const Text("취소")),
+                                      onPressed: () => Navigator.of(context).pop(),
+                                      child: const Text("취소"),
+                                    ),
                                     TextButton(
                                         onPressed: () async {
                                           WifiP2pDevice _wifiP2pDevice = e;
