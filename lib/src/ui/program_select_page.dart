@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_grpc_demo_app/src/provider/ros_lib_state_provider.dart';
 import 'package:flutter_grpc_demo_app/src/ui/roslib/ros_lib_dart_test_page.dart';
 import 'package:flutter_grpc_demo_app/src/ui/roslib/ros_lib_request_test_page.dart';
 import 'package:flutter_grpc_demo_app/src/ui/tcp_socket/tcp_simple_test_page.dart';
 import 'package:flutter_p2p_plus/protos/protos.pb.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ProgramHomePage extends StatefulWidget {
   WifiP2pDevice device;
@@ -73,26 +75,31 @@ class _ProgramSelectPageState extends State<ProgramHomePage> {
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 16,
                     ),
                     Expanded(
-                      child: GestureDetector(
-                        onTap: () async {
-                          await Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => RosLibRequestTestPage(
-                                device: widget.device,
+                      child: Consumer(
+                        builder: (context, ref, _) {
+                          return GestureDetector(
+                            onTap: () async {
+                              await Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => RosLibRequestTestPage(
+                                    device: widget.device,
+                                  ),
+                                ),
+                              );
+                              ref.read(rosLibProvider).destroyConnection();
+                            },
+                            child: const Card(
+                              elevation: 4,
+                              child: Center(
+                                child: Text("ROS LIB (요청 테스트)"),
                               ),
                             ),
                           );
                         },
-                        child: const Card(
-                          elevation: 4,
-                          child: Center(
-                            child: Text("ROS LIB (요청 테스트)"),
-                          ),
-                        ),
                       ),
                     ),
                   ],
